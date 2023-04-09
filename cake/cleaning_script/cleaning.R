@@ -4,11 +4,12 @@
 
 library(tidyverse)
 library(janitor)
+library(here)
 
 ### 1.2 Read In Data
 
-cake_ingredients <- read_csv("data/raw_data/cake-ingredients-1961.csv")
-ingredient_codes <- read_csv("data/raw_data/cake_ingredient_code.csv")
+cake_ingredients <- read_csv(here("data/raw_data/cake-ingredients-1961.csv"))
+ingredient_codes <- read_csv(here("data/raw_data/cake_ingredient_code.csv"))
 
 ### 1.3 Pivot To Long Format
 
@@ -41,15 +42,42 @@ cake_ingredients_clean <- cake_ingredients_clean %>%
 ### 2.2 Update NA `measure values` to `cup` where the ingredient is `Sour Cream`
 
 ### Only `Sour Cream` had a measure of NA, so the below was sufficient. This
-### could be improved howver to only update when ingredient is Sour Cream.
+### could be improved however to only update when ingredient is Sour Cream.
+### Perhaps using a case when?
 
 cake_ingredients_clean <- cake_ingredients_clean %>%
   mutate(measure = coalesce(measure, "Cup"))
                         
+# 3. Tidy `quantity` data.
 
+### 3.1 Replace NAs with 0
 
+cake_ingredients_clean <- cake_ingredients_clean %>%
+  mutate(quantity = coalesce(quantity, 0))
 
+# 4. Tidy `measurement` data.
 
+### Replace `one` with `one whole` to avoid ambiguity.
 
+cake_ingredients_clean <- cake_ingredients_clean %>%
+  mutate(measure = recode(measure,
+                         "one" = "One Whole"))
+
+# 5. Update casing to title across all variables.
+
+cake_ingredients_clean <- cake_ingredients_clean %>%
+  mutate(cake = str_to_title(cake),
+         ingredient = str_to_title(ingredient),
+         measure = str_to_title(measure))
+
+# 6. Write to .csv
+
+write_csv(cake_ingredients_clean, here("data/clean_data/cake_ingredients_clean.csv"))
+
+# 7. Remove redundant objects from environment
+
+rm(ingredient_codes)
+rm(cake_ingredients)
+rm(cake_ingredients_clean)
 
 

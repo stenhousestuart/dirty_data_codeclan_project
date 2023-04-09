@@ -1,0 +1,76 @@
+---
+title: "Cake Ingredients Analysis"
+output: html_notebook
+---
+
+## Run The Below Chunk To Run Cleaning Script & Assign Clean Data For Analysis
+
+```{r}
+
+# Loads `here` library to support file path/directory management.
+library(here)
+
+# Runs cleaning script.
+source(here("cleaning_script/cleaning.R"))
+
+# Reads clean data from .csv and assigns to an object for analysis.
+cake_analysis <- read_csv(here("data/clean_data/cake_ingredients_clean.csv"))
+
+```
+
+## Analysis
+
+### 1. Which cake has the most cocoa in it?
+
+```{r}
+
+cake_analysis %>% 
+  filter(ingredient == "Cocoa") %>%
+  slice_max(quantity, n = 1)
+
+```
+
+### 2. For sponge cake, how many cups of ingredients are used in total?
+
+```{r}
+
+cake_analysis %>% 
+  filter(cake == "Sponge" & measure == "Cup") %>%
+  summarise(total_cups = sum(quantity))
+
+```
+
+### 3. How many ingredients are measured in teaspoons?
+
+```{r}
+
+cake_analysis %>%
+  distinct(ingredient, measure) %>% 
+  filter(measure == "Teaspoon") %>% 
+  summarise(total_ingredients_measured_in_teaspoons = n())
+
+```
+
+### 4. Which cake has the most unique ingredients?
+
+```{r}
+
+cake_analysis %>%
+  filter(quantity != 0.00) %>% 
+  group_by(cake) %>% 
+  summarise(number_of_ingredients = n()) %>% 
+  slice_max(number_of_ingredients, n = 1)
+
+```
+### 5. Which ingredients are used only once?
+
+```{r}
+
+cake_analysis %>%
+  filter(quantity != 0.00) %>%
+  group_by(ingredient) %>% 
+  summarise(times_ingredient_used = n()) %>%
+  filter(times_ingredient_used == 1)
+
+```
+
