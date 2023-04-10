@@ -21,6 +21,7 @@ candy_2015_clean <- candy_2015 %>%
   # Select Columns 1:3 and those beginning with `[`
   select(2:3 | starts_with("[")) %>% 
   clean_names() %>% 
+  remove_empty("rows") %>% 
   rename('age' = 'how_old_are_you',
          'going_out' = 'are_you_going_actually_going_trick_or_treating_yourself')
 
@@ -28,6 +29,7 @@ candy_2016_clean <- candy_2016 %>%
   # Select Columns 1:6 and those beginning with `[`
   select(2:5 | starts_with("[")) %>% 
   clean_names() %>% 
+  remove_empty("rows") %>% 
   rename('age' = 'how_old_are_you',
          'country' = 'which_country_do_you_live_in',
          'going_out' = 'are_you_going_actually_going_trick_or_treating_yourself',
@@ -39,6 +41,7 @@ candy_2017_clean <- candy_2017 %>%
   # Select Columns 1:6 and those beginning with `Q6`
   select(2:5 | starts_with("Q6")) %>% 
   clean_names() %>%
+  remove_empty("rows") %>% 
   # Remove `q.1_` or `q.10_` from start of variable name.
   rename_with(~str_remove(.x, pattern_to_be_removed_from_2017_data))
 
@@ -54,15 +57,15 @@ candy_2015_clean <- candy_2015_clean %>%
   mutate(gender = NA, 
          .before = "going_out") %>% 
   mutate(country = NA, 
-         .before = age) %>% 
-  relocate(going_out, .after = response_id) %>% 
-  relocate(gender, .after = going_out) %>% 
-  relocate(age, .after = gender)
+         .before = age)
+  # relocate(going_out, .after = response_id) %>% 
+  # relocate(gender, .after = going_out) %>% 
+  # relocate(age, .after = gender)
 
 ## 2016
 candy_2016_clean <- candy_2016_clean %>%
   mutate(response_id = str_c("2016", row_number()), 
-         .before = "going_out") %>% 
+         .before = "going_out")
 
 ## 2017
 candy_2017_clean <- candy_2017_clean %>%
@@ -75,26 +78,54 @@ candy_2017_clean <- candy_2017_clean %>%
 ## The data is are pivoted to long format to support future analysis.
 
 ## 2015
-long_2015 <- candy_2015_clean %>%
+candy_2015_long <- candy_2015_clean %>%
   pivot_longer(cols = 6:100, 
                names_to = "candy_type", 
                values_to = "response") 
 
 ## 2016
-long_2016 <- candy_2016_clean %>%
+candy_2016_long <- candy_2016_clean %>%
   pivot_longer(cols = 6:106, 
                names_to = "candy_type", 
                values_to = "response") 
 
 ## 2017
-long_2017 <- candy_2017_clean %>%
+candy_2017_long <- candy_2017_clean %>%
   pivot_longer(cols = 6:108, 
                names_to = "candy_type", 
                values_to = "response") 
 
-
 # Join Data ---------------------------------------------------------------
 
-joined_data <- bind_rows(long_2015, long_2016, long_2017)
+candy_joined <- bind_rows(candy_2015_long, candy_2016_long, candy_2017_long)
   
+# Remove Non-Candy Items --------------------------------------------------
+
+candy_joined <- candy_joined %>%
+  filter(!str_detect(candy_type, "glow_stick|board_game|lapel_pins|pencils|abstained"),
+         !str_detect(candy_type, "cash|dental_paraphenalia|hugs_actual_physical_hugs"),
+         !str_detect(candy_type, "peterson_brand_sidewalk_chalk|chardonnay"),
+         !str_detect(candy_type, "creepy_religious_comics_chick_tracts|acetaminophen|ignore"),
+         !str_detect(candy_type, "swedish_fish|vicodin|white_bread|x114"),
+         !str_detect(candy_type, "person_of_interest_season|real_housewives"))
+
+candy_types_view <- candy_joined %>% distinct(candy_type)
+
+# Tidy `candy_type` -------------------------------------------------
+
+## Standardise Names
+
+candy_joined <- candy_joined %>%
+  mutate(candy_type = str_replace_all(candy_type, "a_friend_to_diabetes", ""),
+         candy_type = str_replace_all(candy_type, "the_candy", ""),
+         candy_type = str_replace_all(candy_type, "x100", "100"),
+         candy_type = str_replace_all(candy_type, "boxo_raisins", "box_o_raisins"),
+         candy_type = str_replace_all(candy_type, "_something_or_other", ""),
+         candy_type = str_replace_all(candy_type, "_we_don_t_know_what_that_is", ""))
+
+## Replace all `_` with ` `.
+candy_joined <- candy_joined %>%
+  mutate(candy_type = str_replace_all(candy_type, "_", " "))
+
+
 
