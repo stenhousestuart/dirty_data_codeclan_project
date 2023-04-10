@@ -2,3 +2,177 @@
 title: "Candy Analysis"
 output: html_notebook
 ---
+
+## Q1.
+What is the total number of candy ratings given across the three years. 
+Number of candy ratings, not the number of raters. Don’t count missing values
+
+```{r}
+
+# Long
+
+candy_joined %>% 
+  filter(response != is(NA)) %>% 
+  summarise(total_ratings = n())
+
+```
+
+
+## Q2.
+What was the average age of people who are going out trick or treating?
+
+```{r}
+
+## Wide
+
+candy_2017_clean %>% 
+  filter(going_out == "Yes") %>%
+  summarise(avg_age_going_out = mean(age, na.rm = TRUE))
+
+```
+
+```{r}
+
+## Long
+
+candy_joined %>%
+  filter(going_out == "Yes") %>%
+  distinct(response_id, .keep_all = TRUE) %>% 
+  summarise(avg_age = mean(age, na.rm = TRUE))
+
+```
+
+
+## Q3.
+What was the average age of people who are not going trick or treating?
+
+```{r}
+
+## Wide
+
+candy_2017_clean %>% 
+  filter(going_out == "No") %>%
+  summarise(avg_age_not_going_out = mean(age, na.rm = TRUE))
+```
+
+## Q4.
+For each of joy, despair and meh, which candy bar received the most of these 
+ratings?
+
+```{r}
+
+## Long
+
+candy_joined %>% 
+  filter(response == "JOY") %>% 
+  count(candy_type, sort = TRUE) %>% 
+  head(1)
+
+```
+
+```{r}
+
+## Long
+
+candy_joined %>% 
+  filter(response == "MEH") %>% 
+  count(candy_type, sort = TRUE) %>% 
+  head(1)
+
+```
+
+```{r}
+
+## Long
+
+candy_joined %>% 
+  filter(response == "DESPAIR") %>% 
+  count(candy_type, sort = TRUE) %>% 
+  head(1)
+
+```
+
+
+## Q5.
+How many people rated Starburst as despair?
+
+```{r}
+
+## Long
+
+candy_joined %>% 
+  filter(candy_type == "starburst" & response == "DESPAIR") %>%
+  summarise(num_starburst_despair = n())
+  
+```
+
+#### Count despair as -1, joy as +1, and meh as 0.
+
+## Q6.
+What was the most popular candy bar by this rating system for each gender 
+in the dataset ?
+
+```{r}
+
+candy_joined_score <- candy_joined %>%
+  mutate(score = case_when(
+    response == "JOY" ~ 1,
+    response == "MEH" ~ 0,
+    response == "DESPAIR" ~ -1
+  )
+)
+
+## Long
+
+candy_joined_score %>% 
+  filter(gender == "Male") %>% 
+  group_by(candy_type) %>% 
+  summarise(total_score = sum(score, na.rm = TRUE)) %>% 
+  arrange(desc(total_score)) %>% 
+  head(1)
+
+
+```
+
+```{r}
+
+## Long
+
+candy_joined_score %>% 
+  filter(gender == "Female") %>% 
+  group_by(candy_type) %>% 
+  summarise(total_score = sum(score, na.rm = TRUE)) %>% 
+  arrange(desc(total_score)) %>% 
+  head(1)
+
+```
+
+## Q7.
+What was the most popular candy bar in each year?
+
+```{r}
+
+### Add a year value at the cleaning stage.
+
+```
+
+
+## Q8.
+What was the most popular candy bar by this rating for people in US, Canada, 
+UK, and all other countries?
+
+```{r}
+
+## Long
+
+candy_joined_score %>% 
+  filter(country == "Canada") %>% 
+  group_by(candy_type) %>% 
+  summarise(total_score = sum(score, na.rm = TRUE)) %>% 
+  arrange(desc(total_score)) %>% 
+  head(1)
+
+```
+
+
+

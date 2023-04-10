@@ -72,10 +72,9 @@ candy_2017_clean <- candy_2017_clean %>%
   mutate(response_id = str_c("2017", row_number()), 
          .before = "going_out")
 
-
 # Pivot Long --------------------------------------------------------------
 
-## The data is are pivoted to long format to support future analysis.
+## The data is pivoted to long format to support future analysis.
 
 ## 2015
 candy_2015_long <- candy_2015_clean %>%
@@ -95,11 +94,14 @@ candy_2017_long <- candy_2017_clean %>%
                names_to = "candy_type", 
                values_to = "response") 
 
+
 # Join Data ---------------------------------------------------------------
 
 candy_joined <- bind_rows(candy_2015_long, candy_2016_long, candy_2017_long)
   
 # Remove Non-Candy Items --------------------------------------------------
+
+## Could these rows be dropped when they are still columns, by indexing?
 
 candy_joined <- candy_joined %>%
   filter(!str_detect(candy_type, "glow_stick|board_game|lapel_pins|pencils|abstained"),
@@ -109,7 +111,7 @@ candy_joined <- candy_joined %>%
          !str_detect(candy_type, "swedish_fish|vicodin|white_bread|x114"),
          !str_detect(candy_type, "person_of_interest_season|real_housewives"))
 
-candy_types_view <- candy_joined %>% distinct(candy_type)
+# candy_types_view <- candy_joined %>% distinct(candy_type)
 
 # Tidy `candy_type` -------------------------------------------------
 
@@ -128,4 +130,46 @@ candy_joined <- candy_joined %>%
   mutate(candy_type = str_replace_all(candy_type, "_", " "))
 
 
+# Tidy Environment --------------------------------------------------------
+
+rm(candy_2015)
+rm(candy_2015_clean)
+rm(candy_2015_long)
+rm(candy_2016)
+rm(candy_2016_clean)
+rm(candy_2016_long)
+rm(candy_2017)
+rm(candy_2017_clean)
+rm(candy_2017_long)
+
+
+# Update Variable Types ---------------------------------------------------
+
+# Could be updated to try and add additional values, rather than cooercing to NA.
+
+# age_view <- candy_joined %>% distinct(age)
+# 
+# candy_joined <- candy_joined %>%
+#   mutate(response_id = as.integer(response_id),
+#          age = as.integer(age))
+
+# Tidy `country` ----------------------------------------------------------
+
+# country_view <- candy_joined %>% distinct(country)
+# 
+# 
+# # Tidy `going_out` --------------------------------------------------------
+# 
+# 
+# ## Convert to logical?
+# 
+# # Tidy`gender` ------------------------------------------------------------
+# 
+# gender_view <- candy_joined %>% distinct(gender)
+
+# 6. Write to .csv
+
+
+
+# 7. Remove redundant objects from environment
 
