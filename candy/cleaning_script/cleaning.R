@@ -1,3 +1,6 @@
+
+# 1. Setup ----------------------------------------------------------------
+
 ### 1.1 Load Libraries
 
 library(tidyverse)
@@ -12,7 +15,7 @@ candy_2016 <- read_excel(here("data/raw_data/boing-boing-candy-2016.xlsx"))
 candy_2017 <- read_excel(here("data/raw_data/boing-boing-candy-2017.xlsx"))
 
 
-# Select Data and Clean Variable Names ------------------------------------
+# 2. Select Data and Clean Variable Names ------------------------------------
 
 ## At this stage, priority is given to cleaning variable names required for 
 ## binding the rows after the data sets have been pivoted.
@@ -45,12 +48,9 @@ candy_2017_clean <- candy_2017 %>%
   # Remove `q.1_` or `q.10_` from start of variable name.
   rename_with(~str_remove(.x, pattern_to_be_removed_from_2017_data))
 
-# Add Response ID Columns -------------------------------------------------
+# 3. Add Extra Columns -------------------------------------------------
 
-## A unique `response_id` column is added for every survey response along with
-## a year value.
-
-## 2015 (Also Adds Gender and Country Columns Populated With NA)
+## 3.1 / 2015 - Add response_id, age, country, gender, year
 
 candy_2015_clean <- candy_2015_clean %>%
   mutate(response_id = str_c("2015", row_number()),
@@ -61,62 +61,68 @@ candy_2015_clean <- candy_2015_clean %>%
          .before = age) %>%
   mutate(year = as.integer(2015))
 
-## 2016
+## 3.2 / 2016 - Add response_id, age, country, gender, year
+
 candy_2016_clean <- candy_2016_clean %>%
   mutate(response_id = str_c("2016", row_number()), 
          .before = "going_out") %>%
   mutate(year = as.integer(2016))
 
-## 2017
+## 3.3 / 2017 - Add response_id, age, country, gender, year
+
 candy_2017_clean <- candy_2017_clean %>%
   mutate(response_id = str_c("2017", row_number()), 
          .before = "going_out") %>% 
   mutate(year = as.integer(2017))
 
-# Pivot Long --------------------------------------------------------------
+# 4. Pivot Data To Long Format & Join --------------------------------------------------------------
 
-## The data is pivoted to long format to support future analysis.
+## 4.1 / Pivot Long 2015
 
-## 2015
 candy_2015_long <- candy_2015_clean %>%
   pivot_longer(cols = 6:100, 
                names_to = "candy_type", 
                values_to = "response") 
 
-## 2016
+## 4.3 / Pivot Long 2016
+
 candy_2016_long <- candy_2016_clean %>%
   pivot_longer(cols = 6:106, 
                names_to = "candy_type", 
                values_to = "response") 
 
-## 2017
+## 4.3 / Pivot Long 2017
+
 candy_2017_long <- candy_2017_clean %>%
   pivot_longer(cols = 6:108, 
                names_to = "candy_type", 
                values_to = "response") 
 
-
-# Join Data ---------------------------------------------------------------
+## 4.4 / Join 2015, 2016 & 2017 Data
 
 candy_joined <- bind_rows(candy_2015_long, candy_2016_long, candy_2017_long)
   
-# Remove Non-Candy Items --------------------------------------------------
+# 5. Tidy `candy_type` Data --------------------------------------------------
 
-## Could these rows be dropped when they are still columns, by indexing?
+## 5.1 / Remove Non-Candy Items
+
+### For the purpose of clarity, based on research and personal judgement
+### candy_type values which contain the below strings have been removed due to
+### not being considered as candy.
 
 candy_joined <- candy_joined %>%
-  filter(!str_detect(candy_type, "glow_stick|board_game|lapel_pins|pencils|abstained"),
-         !str_detect(candy_type, "cash|dental_paraphenalia|hugs_actual_physical_hugs"),
-         !str_detect(candy_type, "peterson_brand_sidewalk_chalk|chardonnay"),
-         !str_detect(candy_type, "creepy_religious_comics_chick_tracts|acetaminophen|ignore"),
-         !str_detect(candy_type, "swedish_fish|vicodin|white_bread|x114"),
-         !str_detect(candy_type, "person_of_interest_season|real_housewives"))
+  filter(!str_detect(candy_type, "glow_stick|board_game|lapel_pins|pencils
+                     |abstained|cash|dental_paraphenalia|hugs_actual_physical_hugs
+                     |peterson_brand_sidewalk_chalk|chardonnay
+                     |creepy_religious_comics_chick_tracts|acetaminophen|ignore
+                     |swedish_fish|vicodin|white_bread|x114
+                     |person_of_interest_season|real_housewives"))
 
-# candy_types_view <- candy_joined %>% distinct(candy_type)
+## 5.2 / Standardise Names
 
-# Tidy `candy_type` -------------------------------------------------
-
-## Standardise Names
+### In some instances candy_type data had been supplied with slight spelling
+### discreprencies. Personal judgement and research have been used to standardise
+### spelling where possible.
 
 candy_joined <- candy_joined %>%
   mutate(candy_type = str_replace_all(candy_type, "a_friend_to_diabetes", ""),
@@ -128,48 +134,45 @@ candy_joined <- candy_joined %>%
 candy_joined <- candy_joined %>%
   mutate(candy_type = str_replace_all(candy_type, "_", " "))
 
+# 6. Tidy `age` Data --------------------------------------------------------------
 
-# Tidy Environment --------------------------------------------------------
-
-rm(candy_2015)
-rm(candy_2015_clean)
-rm(candy_2015_long)
-rm(candy_2016)
-rm(candy_2016_clean)
-rm(candy_2016_long)
-rm(candy_2017)
-rm(candy_2017_clean)
-rm(candy_2017_long)
-
-# Tidy `age` --------------------------------------------------------------
+## 6.1 / Set any values that contain non-digit characters to NA.
 
 non_digit_pattern <- "[\\D]+"
 
-## Set any values that contain non-digit characters to NA.
 candy_joined <- candy_joined %>%
   mutate(age = str_replace_all(age, non_digit_pattern, NA_character_))
 
-## Set class to numeric
+## 6.2 / Set class to numeric
 candy_joined <- candy_joined %>%
   mutate(age = as.numeric(age))
 
-# Set any value greater than 116 (currently worlds oldest living human) to NA.
+## 6.13 /Set any value greater than 116 to NA.
+
+### 116 has been selected as according to personal research this is the current 
+### age of the oldest known living human.
+
 candy_joined <- candy_joined %>%
   mutate(age = if_else(age > 116, NA, age))
 
-# Tidy `country` ----------------------------------------------------------
+# 7. Tidy `country` Data ----------------------------------------------------------
+
+### When clearing the data a certain amount of personal judgement has been used
+### to standardise the formatting and spelling of country data provided. Working
+### is provided below.
 
 non_alpha_numeric_pattern <- "[\\W]"
 
-# Remove Non-Alpha-Numeric Values
+## 7.1 / Remove Non-Alpha-Numeric Values
 candy_joined <- candy_joined %>%
   mutate(country = str_replace_all(country, non_alpha_numeric_pattern, " "))
 
-# Set all To lower case
+## 7.2 / Set all To lower case
 candy_joined <- candy_joined %>% 
   mutate(country = str_to_lower(country))
 
-# Update USA Based On Partial Sring Matches
+## 7.3 / Update USA Based On Partial String Matches
+
 candy_joined <- candy_joined %>% 
   mutate(country = case_when(
     str_detect(country, "state") ~ "united states of america",
@@ -192,7 +195,7 @@ candy_joined <- candy_joined %>%
     TRUE ~ country
   ))
 
-# Update USA State Entries
+## 7.4 / If A US State Is Provided, Update To "united states of america"
 
 candy_joined <- candy_joined %>% 
   mutate(country = case_when(
@@ -208,7 +211,8 @@ candy_joined <- candy_joined %>%
     TRUE ~ country
   ))
 
-# Update UK Countries Based On Partial Sring Matches
+## 7.5 / Update UK Countries Based On Partial String Matches
+
 candy_joined <- candy_joined %>% 
   mutate(country = case_when(
     str_detect(country, "england") ~ "united kingdom",
@@ -221,7 +225,8 @@ candy_joined <- candy_joined %>%
     TRUE ~ country
   ))
 
-# Update To English Version of Country Names / Misc.
+## 7.6 / Update To English Version of Country Names / Misc.
+
 candy_joined <- candy_joined %>% 
   mutate(country = case_when(
     str_detect(country, "españa") ~ "spain",
@@ -230,7 +235,9 @@ candy_joined <- candy_joined %>%
     TRUE ~ country
   ))
 
-# Remove Non Country Values
+## 7.7 / Remove Non Country Values
+
+### Country list sourced from:
 
 candy_joined <- candy_joined %>%
   mutate(country = case_when(
@@ -266,24 +273,24 @@ candy_joined <- candy_joined %>%
                negate = TRUE) ~ NA,
     TRUE ~ country))
 
-# Set all To Upper case
+## 7.8 / Set All To Upper case
+
 candy_joined <- candy_joined %>% 
   mutate(country = str_to_title(country))
 
-country_view <- candy_joined %>% distinct(country)
+# 8. Write To .csv -----------------------------------------------------------
 
-# # Tidy `going_out` --------------------------------------------------------
-# 
-# 
-# ## Convert to logical?
-# 
-# # Tidy`gender` ------------------------------------------------------------
-# 
-# gender_view <- candy_joined %>% distinct(gender)
+write_csv(candy_joined, here("data/clean_data/candy_clean.csv"))
 
-# 6. Write to .csv
+# 9. Clear Environment ----------------------------------------------------
 
-
-
-# 7. Remove redundant objects from environment
-
+rm(candy_2015)
+rm(candy_2015_clean)
+rm(candy_2015_long)
+rm(candy_2016)
+rm(candy_2016_clean)
+rm(candy_2016_long)
+rm(candy_2017)
+rm(candy_2017_clean)
+rm(candy_2017_long)
+rm(candy_joined)
