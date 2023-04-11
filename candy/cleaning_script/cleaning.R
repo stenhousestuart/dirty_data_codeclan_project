@@ -104,35 +104,47 @@ candy_joined <- bind_rows(candy_2015_long, candy_2016_long, candy_2017_long)
   
 # 5. Tidy `candy_type` Data --------------------------------------------------
 
-## 5.1 / Remove Non-Candy Items
+## 5.1 / Replace all `_` with ` `.
+candy_joined <- candy_joined %>%
+  mutate(candy_type = str_replace_all(candy_type, "_", " "))
+
+## 5.2 / Remove Non-Candy Items
 
 ### For the purpose of clarity, based on research and personal judgement
 ### candy_type values which contain the below strings have been removed due to
 ### not being considered as candy.
 
-candy_joined <- candy_joined %>%
-  filter(!str_detect(candy_type, "glow_stick|board_game|lapel_pins|pencils
-                     |abstained|cash|dental_paraphenalia|hugs_actual_physical_hugs
-                     |peterson_brand_sidewalk_chalk|chardonnay
-                     |creepy_religious_comics_chick_tracts|acetaminophen|ignore
-                     |swedish_fish|vicodin|white_bread|x114
-                     |person_of_interest_season|real_housewives"))
+not_candy <- c("cash or other forms of legal tender", "dental paraphenalia",
+               "generic brand acetaminophen", "glow sticks", "broken glow stick",
+               "creepy religious comics chick tracts", "healthy fruit",
+               "hugs actual physical hugs", "kale smoothie", "lapel pins",
+               "pencils", "swedish fish", "peterson brand sidewalk chalk",
+               "vicodin", "white bread", "whole wheat anything",
+               "bonkers the board game", "chardonnay",
+               "person of interest season 3 dvd box set not including disc 4 with hilarious outtakes",
+               "abstained from m ming", 
+               "real housewives of orange county season 9 blue ray", "green party m ms",
+               "independent m ms", "third party m ms", "red m ms", "blue m ms")
 
-## 5.2 / Standardise Names
+candy_joined <- candy_joined %>%
+  filter(!candy_type %in% not_candy)
+
+## 5.2 / Standardise Candy Names
 
 ### In some instances candy_type data had been supplied with slight spelling
 ### discreprencies. Personal judgement and research have been used to standardise
 ### spelling where possible.
 
 candy_joined <- candy_joined %>%
-  mutate(candy_type = str_replace_all(candy_type, "a_friend_to_diabetes", ""),
-         candy_type = str_replace_all(candy_type, "the_candy", ""),
+  mutate(candy_type = str_replace_all(candy_type, "a friend to diabetes", ""),
+         candy_type = str_replace_all(candy_type, "the candy", ""),
          candy_type = str_replace_all(candy_type, "x100", "100"),
-         candy_type = str_replace_all(candy_type, "boxo_raisins", "box_o_raisins"))
+         candy_type = str_replace_all(candy_type, "boxo raisins", "box o raisins"))
 
-## Replace all `_` with ` `.
-candy_joined <- candy_joined %>%
-  mutate(candy_type = str_replace_all(candy_type, "_", " "))
+candy_joined <- candy_joined %>% 
+  mutate(candy_type = case_when(
+    str_detect(candy_type, "anonymous brown globs") ~ "mary janes",
+    TRUE ~ candy_type ))
 
 # 6. Tidy `age` Data --------------------------------------------------------------
 
@@ -237,43 +249,47 @@ candy_joined <- candy_joined %>%
 
 ## 7.7 / Remove Non Country Values
 
-### Country list sourced from:
+### Country list sourced from: https://github.com/stefangabos/world_countries/
 
 candy_joined <- candy_joined %>%
   mutate(country = case_when(
-    str_detect(country, "afghanistan|albania|algeria|andorra|angola|antigua & deps
+    str_detect(country, "afghanistan|albania|algeria|andorra|angola|antigua and barbuda
                |argentina|armenia|australia|austria|azerbaijan|bahamas|bahrain
-               |bangladesh|barbados|belarus|belgium|belize|benin|bhutan|bolivia
-               |bosnia herzegovina|botswana|brazil|brunei|bulgaria|burkina|burundi
-               |cambodia|cameroon|canada|cape verde|central african rep|chad|chile
-               |china|colombia|comoros|congo|congo|costa rica|croatia|cuba|cyprus
-               |czech republic|denmark|djibouti|dominica|dominican republic
-               |east timor|ecuador|egypt|el salvador|equatorial guinea|eritrea
-               |estonia|ethiopia|fiji|finland|france|gabon|gambia|georgia|germany
-               |ghana|greece|grenada|guatemala|guinea|guinea-bissau|guyana|haiti
-               |honduras|hungary|iceland|india|indonesia|iran|iraq|ireland|israel
-               |italy|ivory coast|jamaica|japan|jordan|kazakhstan|kenya|kiribati
-               |korea north|korea south|kosovo|kuwait|kyrgyzstan|laos|latvia
-               |lebanon|lesotho|liberia|libya|liechtenstein|lithuania|luxembourg
-               |macedonia|madagascar|malawi|malaysia|maldives|mali|malta
-               |marshall islands|mauritania|mauritius|mexico|micronesia|moldova
-               |monaco|mongolia|montenegro|morocco|mozambique|myanmar|namibia
-               |nauru|nepal|netherlands|new zealand|nicaragua|niger|nigeria
-               |norway|oman|pakistan|palau|panama|papua new guinea|paraguay|peru
-               |philippines|poland|portugal|qatar|romania|russian federation
-               |rwanda|st kitts & nevis|st lucia|saint vincent & the grenadines
-               |samoa|san marino|sao tome & principe|saudi arabia|senegal|serbia
-               |seychelles|sierra leone|singapore|slovakia|slovenia
-               |solomon islands|somalia|south africa|south sudan|spain|sri lanka
-               |sudan|suriname|swaziland|sweden|switzerland|syria|taiwan
-               |tajikistan|tanzania|thailand|togo|tonga|trinidad & tobago|tunisia
-               |turkey|turkmenistan|tuvalu|uganda|ukraine|united arab emirates
-               |united kingdom|united states of america|uruguay|uzbekistan
-               |vanuatu|vatican city|venezuela|vietnam|yemen|zambia|zimbabwe",
+               |bangladesh|barbados|belarus|belgium|belize|benin|bhutan
+               |bolivia|bosnia and herzegovina
+               |botswana|brazil|brunei darussalam|bulgaria|burkina faso
+               |burundi|cabo verde|cambodia|cameroon|canada|central african republic
+               |chad|chile|china|colombia|comoros|congo|congo
+               |costa rica|coe d'ivoire|croatia|cuba|cyprus|czechia|denmark|djibouti
+               |dominica|dominican republic|ecuador|egypt|el salvador|equatorial guinea
+               |eritrea|estonia|eswatini|ethiopia|fiji|finland|france|gabon|gambia
+               |georgia|germany|ghana|greece|grenada|guatemala|guinea|guinea-bissau
+               |guyana|haiti|honduras|hungary|iceland|india|indonesia
+               |iran|iraq|ireland|israel|italy|jamaica
+               |japan|jordan|kazakhstan|kenya|kiribati
+               |democratic people's republic of korea|republic of korea
+               |kuwait|kyrgyzstan|lao people's democratic republic|latvia|lebanon
+               |lesotho|liberia|libya|liechtenstein|lithuania|luxembourg
+               |madagascar|malawi|malaysia|maldives|mali|malta|marshall islands
+               |mauritania|mauritius|mexico|micronesia
+               |moldova|monaco|mongolia|montenegro|morocco|mozambique
+               |myanmar|namibia|nauru|nepal|netherlands|new zealand|nicaragua
+               |niger|nigeria|north macedonia|norway|oman|pakistan|palau|panama
+               |papua new guinea|paraguay|peru|philippines|poland|portugal|qatar
+               |romania|russian federation|rwanda|saint kitts and nevis
+               |saint lucia|saint vincent and the grenadines|samoa|san marino
+               |sao tome and principe|saudi arabia|senegal|serbia|seychelles
+               |sierra leone|singapore|slovakia|slovenia|solomon islands|somalia
+               |south africa|south sudan|spain|sri lanka|sudan|suriname|sweden
+               |switzerland|syrian arab republic|tajikistan|tanzania
+               |thailand|timor-leste|togo|tonga|trinidad and tobago|tunisia|turkiye
+               |turkmenistan|tuvalu|uganda|ukraine|united arab emirates
+               |united kingdom|united states of america|uruguay|uzbekistan|vanuatu
+               |venezuela|vietnam|yemen|zambia|zimbabwe",
                negate = TRUE) ~ NA,
     TRUE ~ country))
 
-## 7.8 / Set All To Upper case
+## 7.7 / Set All To Upper case
 
 candy_joined <- candy_joined %>% 
   mutate(country = str_to_title(country))
@@ -294,3 +310,6 @@ rm(candy_2017)
 rm(candy_2017_clean)
 rm(candy_2017_long)
 rm(candy_joined)
+
+
+
