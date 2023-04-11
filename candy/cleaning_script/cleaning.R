@@ -47,30 +47,31 @@ candy_2017_clean <- candy_2017 %>%
 
 # Add Response ID Columns -------------------------------------------------
 
-## A unique `response_id` column is added for every survey response.
+## A unique `response_id` column is added for every survey response along with
+## a year value.
 
 ## 2015 (Also Adds Gender and Country Columns Populated With NA)
 
 candy_2015_clean <- candy_2015_clean %>%
-  mutate(response_id = str_c("2015", row_number()), 
-         .before = "age") %>% 
-  mutate(gender = NA, 
-         .before = "going_out") %>% 
-  mutate(country = NA, 
-         .before = age)
-  # relocate(going_out, .after = response_id) %>% 
-  # relocate(gender, .after = going_out) %>% 
-  # relocate(age, .after = gender)
+  mutate(response_id = str_c("2015", row_number()),
+         .before = "age") %>%
+  mutate(gender = NA,
+         .before = "going_out") %>%
+  mutate(country = NA,
+         .before = age) %>%
+  mutate(year = as.integer(2015))
 
 ## 2016
 candy_2016_clean <- candy_2016_clean %>%
   mutate(response_id = str_c("2016", row_number()), 
-         .before = "going_out")
+         .before = "going_out") %>%
+  mutate(year = as.integer(2016))
 
 ## 2017
 candy_2017_clean <- candy_2017_clean %>%
   mutate(response_id = str_c("2017", row_number()), 
-         .before = "going_out")
+         .before = "going_out") %>% 
+  mutate(year = as.integer(2017))
 
 # Pivot Long --------------------------------------------------------------
 
@@ -121,9 +122,7 @@ candy_joined <- candy_joined %>%
   mutate(candy_type = str_replace_all(candy_type, "a_friend_to_diabetes", ""),
          candy_type = str_replace_all(candy_type, "the_candy", ""),
          candy_type = str_replace_all(candy_type, "x100", "100"),
-         candy_type = str_replace_all(candy_type, "boxo_raisins", "box_o_raisins"),
-         candy_type = str_replace_all(candy_type, "_something_or_other", ""),
-         candy_type = str_replace_all(candy_type, "_we_don_t_know_what_that_is", ""))
+         candy_type = str_replace_all(candy_type, "boxo_raisins", "box_o_raisins"))
 
 ## Replace all `_` with ` `.
 candy_joined <- candy_joined %>%
@@ -142,22 +141,137 @@ rm(candy_2017)
 rm(candy_2017_clean)
 rm(candy_2017_long)
 
+# Tidy `age` --------------------------------------------------------------
 
-# Update Variable Types ---------------------------------------------------
+non_digit_pattern <- "[\\D]+"
 
-# Could be updated to try and add additional values, rather than cooercing to NA.
+## Set any values that contain non-digit characters to NA.
+candy_joined <- candy_joined %>%
+  mutate(age = str_replace_all(age, non_digit_pattern, NA_character_))
 
-# age_view <- candy_joined %>% distinct(age)
-# 
-# candy_joined <- candy_joined %>%
-#   mutate(response_id = as.integer(response_id),
-#          age = as.integer(age))
+## Set class to numeric
+candy_joined <- candy_joined %>%
+  mutate(age = as.numeric(age))
+
+# Set any value greater than 116 (currently worlds oldest living human) to NA.
+candy_joined <- candy_joined %>%
+  mutate(age = if_else(age > 116, NA, age))
 
 # Tidy `country` ----------------------------------------------------------
 
-# country_view <- candy_joined %>% distinct(country)
-# 
-# 
+non_alpha_numeric_pattern <- "[\\W]"
+
+# Remove Non-Alpha-Numeric Values
+candy_joined <- candy_joined %>%
+  mutate(country = str_replace_all(country, non_alpha_numeric_pattern, " "))
+
+# Set all To lower case
+candy_joined <- candy_joined %>% 
+  mutate(country = str_to_lower(country))
+
+# Update USA Based On Partial Sring Matches
+candy_joined <- candy_joined %>% 
+  mutate(country = case_when(
+    str_detect(country, "state") ~ "united states of america",
+    str_detect(country, "usa")  ~ "united states of america",
+    str_detect(country, "us")  ~ "united states of america",
+    str_detect(country, "u s a")  ~ "united states of america",
+    str_detect(country, "america")  ~ "united states of america",
+    str_detect(country, "united sates")  ~ "united states of america",
+    str_detect(country, "murica")  ~ "united states of america",
+    str_detect(country, "merica")  ~ "united states of america",
+    str_detect(country, "united stetes")  ~ "united states of america",
+    str_detect(country, "united staes")  ~ "united states of america",
+    str_detect(country, "u s")  ~ "united states of america",
+    str_detect(country, " merica")  ~ "united states of america",
+    str_detect(country, "amerca")  ~ "united states of america",
+    str_detect(country, "united ststes")  ~ "united states of america",
+    str_detect(country, "united statss")  ~ "united states of america",
+    str_detect(country, "murrika")  ~ "united states of america",
+    str_detect(country, "the yoo ess of aaayyyyyy")  ~ "united states of america",
+    TRUE ~ country
+  ))
+
+# Update USA State Entries
+
+candy_joined <- candy_joined %>% 
+  mutate(country = case_when(
+    str_detect(country, "alabama|alaska|arizona|arkansas|california|colorado|
+               connecticut|delaware|district of columbia|florida|georgia|hawaii|
+               idaho|illinois|indiana|iowa|kansas|kentucky|louisiana|maine|maryland|
+               massachusetts|michigan|minnesota|mississippi|missouri|montana|
+               nebraska|nevada|new hampshire|new jersey|new mexico|new york|
+               north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania|
+               rhode island|south carolina|south dakota|tennessee|texas|utah|
+               vermont|virginia|washington|west virginia|wisconsin|wyoming") 
+    ~ "united states of america",
+    TRUE ~ country
+  ))
+
+# Update UK Countries Based On Partial Sring Matches
+candy_joined <- candy_joined %>% 
+  mutate(country = case_when(
+    str_detect(country, "england") ~ "united kingdom",
+    str_detect(country, "united kingdom")  ~ "united kingdom",
+    str_detect(country, "united kindom")  ~ "united kingdom",
+    str_detect(country, "u k")  ~ "united kingdom",
+    str_detect(country, "endland")  ~ "united kingdom",
+    str_detect(country, "scotland")  ~ "united kingdom",
+    str_detect(country, "uk")  ~ "united kingdom",
+    TRUE ~ country
+  ))
+
+# Update To English Version of Country Names / Misc.
+candy_joined <- candy_joined %>% 
+  mutate(country = case_when(
+    str_detect(country, "españa") ~ "spain",
+    str_detect(country, "brasil") ~ "brazil",
+    str_detect(country, "netherlands") ~ "netherlands",
+    TRUE ~ country
+  ))
+
+# Remove Non Country Values
+
+candy_joined <- candy_joined %>%
+  mutate(country = case_when(
+    str_detect(country, "afghanistan|albania|algeria|andorra|angola|antigua & deps
+               |argentina|armenia|australia|austria|azerbaijan|bahamas|bahrain
+               |bangladesh|barbados|belarus|belgium|belize|benin|bhutan|bolivia
+               |bosnia herzegovina|botswana|brazil|brunei|bulgaria|burkina|burundi
+               |cambodia|cameroon|canada|cape verde|central african rep|chad|chile
+               |china|colombia|comoros|congo|congo|costa rica|croatia|cuba|cyprus
+               |czech republic|denmark|djibouti|dominica|dominican republic
+               |east timor|ecuador|egypt|el salvador|equatorial guinea|eritrea
+               |estonia|ethiopia|fiji|finland|france|gabon|gambia|georgia|germany
+               |ghana|greece|grenada|guatemala|guinea|guinea-bissau|guyana|haiti
+               |honduras|hungary|iceland|india|indonesia|iran|iraq|ireland|israel
+               |italy|ivory coast|jamaica|japan|jordan|kazakhstan|kenya|kiribati
+               |korea north|korea south|kosovo|kuwait|kyrgyzstan|laos|latvia
+               |lebanon|lesotho|liberia|libya|liechtenstein|lithuania|luxembourg
+               |macedonia|madagascar|malawi|malaysia|maldives|mali|malta
+               |marshall islands|mauritania|mauritius|mexico|micronesia|moldova
+               |monaco|mongolia|montenegro|morocco|mozambique|myanmar|namibia
+               |nauru|nepal|netherlands|new zealand|nicaragua|niger|nigeria
+               |norway|oman|pakistan|palau|panama|papua new guinea|paraguay|peru
+               |philippines|poland|portugal|qatar|romania|russian federation
+               |rwanda|st kitts & nevis|st lucia|saint vincent & the grenadines
+               |samoa|san marino|sao tome & principe|saudi arabia|senegal|serbia
+               |seychelles|sierra leone|singapore|slovakia|slovenia
+               |solomon islands|somalia|south africa|south sudan|spain|sri lanka
+               |sudan|suriname|swaziland|sweden|switzerland|syria|taiwan
+               |tajikistan|tanzania|thailand|togo|tonga|trinidad & tobago|tunisia
+               |turkey|turkmenistan|tuvalu|uganda|ukraine|united arab emirates
+               |united kingdom|united states of america|uruguay|uzbekistan
+               |vanuatu|vatican city|venezuela|vietnam|yemen|zambia|zimbabwe",
+               negate = TRUE) ~ NA,
+    TRUE ~ country))
+
+# Set all To Upper case
+candy_joined <- candy_joined %>% 
+  mutate(country = str_to_title(country))
+
+country_view <- candy_joined %>% distinct(country)
+
 # # Tidy `going_out` --------------------------------------------------------
 # 
 # 
