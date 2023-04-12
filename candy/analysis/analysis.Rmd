@@ -38,7 +38,7 @@ What was the average age of people who are going out trick or treating?
 ```{r}
 
 candy_analysis %>%
-  filter(going_out == "Yes") %>%
+  filter(going_out_trick_or_treating == TRUE) %>%
   distinct(response_id, .keep_all = TRUE) %>% 
   summarise(avg_age = round(mean(age, na.rm = TRUE), 0))
 
@@ -51,7 +51,7 @@ What was the average age of people who are not going trick or treating?
 ```{r}
 
 candy_analysis %>%
-  filter(going_out == "No") %>%
+  filter(going_out_trick_or_treating == FALSE) %>%
   distinct(response_id, .keep_all = TRUE) %>% 
   summarise(avg_age = round(mean(age, na.rm = TRUE), 0))
 
@@ -150,42 +150,127 @@ candy_analysis_with_scoring %>%
 ### Q7.
 What was the most popular candy bar in each year?
 
+#### Function Setup / Testing
+
+The below functions will be used to return the most popular candy bar in each 
+year. As the most popular candy for all three years was returned as "any full 
+sized candy bar", a second function is used to find the most popular candy bar
+in these years, excluding "any full sized candy bar".
+
 ```{r}
 
-# 2015
+most_popular_candy_by_year <- function(input_data, input_year){
+  
+  # Check if `input_year` is character or logical value and set error messages.
+  
+    if (is.character(input_year)){
+      stop("Character input for `input_year` - only numeric values accepted")
+      }
+    
+  
+    if (is.logical(input_year)){
+      stop("Logical input for `input_year` - only numeric values accepted")
+      }
+  
+  # Check to see if there are any instances of the input year in the data.
+  
+  if (input_year %in% input_data$year){
+     
+     most_popular_candy <- input_data %>% 
+       filter(year == input_year) %>% 
+       group_by(candy_type) %>%  
+       summarise(total_yearly_score = sum(score, na.rm = TRUE)) %>% 
+       arrange(desc(total_yearly_score)) %>% 
+       head(1)
+     
+  # Return a string containing the most popular candy of that year & it's score.
+     
+    return(str_c("In ", input_year, " the most popular candy was ", most_popular_candy[1], 
+                 " with a score of ", most_popular_candy[2]))
+  
+  # If the are no instances of the year, return the below message.
+     
+  } else {
+    return("Unfortunately we don't have any candy data for this year!")
+  }
+}
 
-candy_analysis_with_scoring %>%
-  filter(year == 2015) %>% 
-  group_by(candy_type) %>%  
-  summarise(total_yearly_score = sum(score, na.rm = TRUE)) %>% 
-  arrange(desc(total_yearly_score)) %>% 
-  head(1)            
+test_that("Character or Logical input returns an error", {
+  expect_error(most_popular_candy_by_year$input_year("2011"))
+  expect_error(most_popular_candy_by_year$input_year(TRUE))
+  expect_error(most_popular_candy_by_year$input_year(FALSE))
+})
 
 ```
 
 ```{r}
+most_popular_candy_by_year_minus_any_full_size <- function(input_data, input_year){
+  
+  # Check if `input_year` is character or logical value and set error messages.
+  
+    if (is.character(input_year)){
+      stop("Character input for `input_year` - only numeric values accepted")
+      }
+    
+  
+    if (is.logical(input_year)){
+      stop("Logical input for `input_year` - only numeric values accepted")
+      }
+  
+  # Check to see if there are any instances of the input year in the data.
+  
+  if (input_year %in% input_data$year){
+     
+     most_popular_candy <- input_data %>% 
+       filter(year == input_year & candy_type != "any full sized candy bar") %>% 
+       group_by(candy_type) %>%  
+       summarise(total_yearly_score = sum(score, na.rm = TRUE)) %>% 
+       arrange(desc(total_yearly_score)) %>% 
+       head(1)
+     
+  # Return a string containing the most popular candy of that year & it's score.
+     
+    return(str_c(most_popular_candy[1], " was the most popular candy in ", input_year, 
+                 " exluding any full sized candy bar"))
+  # If the are no instances of the year, return the below message.
+     
+  } else {
+    return("Unfortunately we don't have any candy data for this year!")
+  }
+}
 
-# 2016
-
-candy_analysis_with_scoring %>%
-  filter(year == 2016) %>% 
-  group_by(candy_type) %>%  
-  summarise(total_yearly_score = sum(score, na.rm = TRUE)) %>% 
-  arrange(desc(total_yearly_score)) %>% 
-  head(1)  
+test_that("Character or Logical input returns an error", {
+  expect_error(most_popular_candy_by_year_minus_any_full_size$input_year("2011"))
+  expect_error(most_popular_candy_by_year_minus_any_full_size$input_year(TRUE))
+  expect_error(most_popular_candy_by_year_minus_any_full_size$input_year(FALSE))
+})
 
 ```
 
+#### Answers
+
+2015:
+
 ```{r}
 
-# 2017
+most_popular_candy(candy_analysis_with_scoring, 2015)
+most_popular_candy_by_year_minus_any_full_size(candy_analysis_with_scoring, 2015)
 
-candy_analysis_with_scoring %>%
-  filter(year == 2017) %>% 
-  group_by(candy_type) %>%  
-  summarise(total_yearly_score = sum(score, na.rm = TRUE)) %>% 
-  arrange(desc(total_yearly_score)) %>% 
-  head(1)  
+```
+2015:
+
+```{r}
+
+most_popular_candy(candy_analysis_with_scoring, 2016)
+most_popular_candy_by_year_minus_any_full_size(candy_analysis_with_scoring, 2016)
+
+```
+2017:
+
+```{r}
+
+most_popular_candy(candy_analysis_with_scoring, 2017)
+most_popular_candy_by_year_minus_any_full_size(candy_analysis_with_scoring, 2017)
 
 ```
 
