@@ -134,7 +134,7 @@ candy_joined <- candy_joined %>%
 ### in black and orange wrappers" were "mary janes" and so any candy_type
 ### referencing this text was updated to "mary janes". Furthermore, it was
 ### decided to leave all three "licorice" types ("licorice yes black", 
-### "licorice not black" and "licorice") to maintain specific preferences
+### "licorice not black" and "licorice") to maintain specific preferences.
 
 candy_joined <- candy_joined %>%
   mutate(candy_type = str_replace_all(candy_type, "a friend to diabetes", ""),
@@ -191,13 +191,10 @@ candy_joined <- candy_joined %>%
 
 ### Details:
 ### A wide range of text was entered as age data by respondents. Considering
-### my current time constraints and proficiency level, for the purposes of this 
-### project any age data which contains non-numeric text will be updated to NA. 
-### It is recognised that this may lead to the loss of some usable data being 
-### lost.
-
-age_view <- candy_joined %>% 
-  distinct(age)
+### project time constraints and my current proficiency level, for the purposes 
+### of this project any age data which contains non-numeric text will be updated 
+### to NA. It is recognised that this may lead to the loss of some usable data
+### and therefor, for transparency, full working can be seen below.
 
 non_digit_pattern <- "[\\D]+"
 
@@ -222,25 +219,35 @@ candy_joined <- candy_joined %>%
 
 # 7. Tidy `country` Data ----------------------------------------------------------
 
-### When clearing the data a certain amount of personal judgement has been used
-### to standardise the formatting and spelling of country data provided. Working
-### is provided below.
+### Details:
+### Some country data looked to have been entered with slight spelling
+### discrepancies. Personal judgement and online research were used to 
+### standardise spelling where possible for more accurate analysis. When cleaning 
+### the data a certain amount of personal judgement has been used to standardise 
+### the formatting and spelling of country data provided. Working is provided below.
+
+## 7.1 / Remove Non-Alpha-Numeric Values
 
 non_alpha_numeric_pattern <- "[\\W]"
 
-## 7.1 / Remove Non-Alpha-Numeric Values
 candy_joined <- candy_joined %>%
   mutate(country = str_replace_all(country, non_alpha_numeric_pattern, " "))
 
 ## 7.2 / Set all To lower case
+
 candy_joined <- candy_joined %>% 
   mutate(country = str_to_lower(country))
 
-## 7.3 / Set all To lower case
+## 7.3 / Trim leading and trailing white space.
+
 candy_joined <- candy_joined %>%
   mutate(country = str_trim(country))
 
-## 7.3 / Update USA Based On Partial String Matches
+## 7.4 / Update USA Based On Partial String Matches
+
+### Initial number of distinct country values: 169
+### Number of distinct country values after 7.1, 7.2 and 7.3: 132
+### Number of distinct country values after updating USA values: 87
 
 candy_joined <- candy_joined %>%
   mutate(country = case_when(
@@ -264,7 +271,10 @@ candy_joined <- candy_joined %>%
     TRUE ~ country
   ))
 
-## 7.4 / If A US State Is Provided, Update To "united states of america"
+## 7.6 / If A US State Is Provided, Update To "united states of america"
+
+### Starting number of distinct country values: 87
+### Number of distinct country values after updating states to USA: 82 
 
 candy_joined <- candy_joined %>%
   mutate(country = recode(country,
@@ -321,7 +331,13 @@ candy_joined <- candy_joined %>%
                           "west virginia" = "united states of america",
                           "wyoming" = "united states of america"))
 
-## 7.5 / Update UK Countries Based On Partial String Matches
+## 7.7 / Update UK Countries Based On Partial String Matches
+
+### As one of the analysis questions asks about UK values, the decision was made
+### to group any England, Scotland, Wales and Northern Ireland entries under UK.
+
+### Starting number of distinct country values: 82
+### Number of distinct country values after UK updates: 76
 
 candy_joined <- candy_joined %>% 
   mutate(country = case_when(
@@ -335,7 +351,10 @@ candy_joined <- candy_joined %>%
     TRUE ~ country
   ))
 
-## 7.6 / Update To English Version of Country Names / Misc.
+## 7.8 / Update To English Version of Country Names / Misc.
+
+### Starting number of distinct country values: 76
+### Number of distinct country values after UK updates: 74
 
 candy_joined <- candy_joined %>% 
   mutate(country = case_when(
@@ -345,54 +364,64 @@ candy_joined <- candy_joined %>%
     TRUE ~ country
   ))
 
-## 7.7 / Remove Non Country Values
+## 7.9 / Remove Non Country Values
 
-### Country list sourced from: https://github.com/stefangabos/world_countries/
-### With updates made to allow for varied dataset. For example, 
-### "Bolivia (Plurinational State of)" updated to "
+### For the next stage, I sourced a full country list from 
+### "https://github.com/stefangabos/world_countries/" to compare my country
+### data against. Considering project  time constraints and my own current 
+### proficiency level, for the purposes of this project any country data which 
+### does not match will be updated to NA. It is recognised that this may lead 
+### to the loss of some usable data and so to try and mitigate this, 
+### personal judgement was used to update some country names from their formal
+### name to a shorter version eg. "Bolivia (Plurinational State of)" 
+### updated to "Bolivia". It is recognised that this may lead to the loss of some usable data
+### and therefor, for transparency, the full country name list used is below.
 
-# candy_joined <- candy_joined %>%
-#   mutate(country = case_when(
-#     str_detect(country, "afghanistan|albania|algeria|andorra|angola|antigua and barbuda
-#                |argentina|armenia|australia|austria|azerbaijan|bahamas|bahrain
-#                |bangladesh|barbados|belarus|belgium|belize|benin|bhutan
-#                |bolivia|bosnia and herzegovina
-#                |botswana|brazil|brunei darussalam|bulgaria|burkina faso
-#                |burundi|cabo verde|cambodia|cameroon|canada|central african republic
-#                |chad|chile|china|colombia|comoros|congo|congo
-#                |costa rica|cote d'ivoire|croatia|cuba|cyprus|czechia|denmark|djibouti
-#                |dominica|dominican republic|ecuador|egypt|el salvador|equatorial guinea
-#                |eritrea|estonia|eswatini|ethiopia|fiji|finland|france|gabon|gambia
-#                |georgia|germany|ghana|greece|grenada|guatemala|guinea|guinea-bissau
-#                |guyana|haiti|honduras|hungary|iceland|india|indonesia
-#                |iran|iraq|ireland|israel|italy|jamaica
-#                |japan|jordan|kazakhstan|kenya|kiribati
-#                |democratic people's republic of korea|republic of korea
-#                |kuwait|kyrgyzstan|lao people's democratic republic|latvia|lebanon
-#                |lesotho|liberia|libya|liechtenstein|lithuania|luxembourg
-#                |madagascar|malawi|malaysia|maldives|mali|malta|marshall islands
-#                |mauritania|mauritius|mexico|micronesia
-#                |moldova|monaco|mongolia|montenegro|morocco|mozambique
-#                |myanmar|namibia|nauru|nepal|netherlands|new zealand|nicaragua
-#                |niger|nigeria|north macedonia|norway|oman|pakistan|palau|panama
-#                |papua new guinea|paraguay|peru|philippines|poland|portugal|qatar
-#                |romania|russian federation|rwanda|saint kitts and nevis
-#                |saint lucia|saint vincent and the grenadines|samoa|san marino
-#                |sao tome and principe|saudi arabia|senegal|serbia|seychelles
-#                |sierra leone|singapore|slovakia|slovenia|solomon islands|somalia
-#                |south africa|south sudan|spain|sri lanka|sudan|suriname|sweden
-#                |switzerland|syrian arab republic|tajikistan|tanzania
-#                |thailand|timor-leste|togo|tonga|trinidad and tobago|tunisia|turkiye
-#                |turkmenistan|tuvalu|uganda|ukraine|united arab emirates
-#                |united kingdom|united states of america|uruguay|uzbekistan|vanuatu
-#                |venezuela|vietnam|yemen|zambia|zimbabwe",
-#                negate = TRUE) ~ NA,
-#     TRUE ~ country))
+### Starting number of distinct country values: 74
+### Number of distinct country values after UK updates: 28
+
+candy_joined <- candy_joined %>%
+  mutate(country = case_when(
+    str_detect(country, "afghanistan|albania|algeria|andorra|angola|antigua and barbuda
+               |argentina|armenia|australia|austria|azerbaijan|bahamas|bahrain
+               |bangladesh|barbados|belarus|belgium|belize|benin|bhutan
+               |bolivia|bosnia and herzegovina
+               |botswana|brazil|brunei darussalam|bulgaria|burkina faso
+               |burundi|cabo verde|cambodia|cameroon|canada|central african republic
+               |chad|chile|china|colombia|comoros|congo|congo
+               |costa rica|cote d'ivoire|croatia|cuba|cyprus|czechia|denmark|djibouti
+               |dominica|dominican republic|ecuador|egypt|el salvador|equatorial guinea
+               |eritrea|estonia|eswatini|ethiopia|fiji|finland|france|gabon|gambia
+               |georgia|germany|ghana|greece|grenada|guatemala|guinea|guinea-bissau
+               |guyana|haiti|honduras|hungary|iceland|india|indonesia
+               |iran|iraq|ireland|israel|italy|jamaica
+               |japan|jordan|kazakhstan|kenya|kiribati
+               |democratic people's republic of korea|republic of korea
+               |kuwait|kyrgyzstan|lao people's democratic republic|latvia|lebanon
+               |lesotho|liberia|libya|liechtenstein|lithuania|luxembourg
+               |madagascar|malawi|malaysia|maldives|mali|malta|marshall islands
+               |mauritania|mauritius|mexico|micronesia
+               |moldova|monaco|mongolia|montenegro|morocco|mozambique
+               |myanmar|namibia|nauru|nepal|netherlands|new zealand|nicaragua
+               |niger|nigeria|north macedonia|norway|oman|pakistan|palau|panama
+               |papua new guinea|paraguay|peru|philippines|poland|portugal|qatar
+               |romania|russian federation|rwanda|saint kitts and nevis
+               |saint lucia|saint vincent and the grenadines|samoa|san marino
+               |sao tome and principe|saudi arabia|senegal|serbia|seychelles
+               |sierra leone|singapore|slovakia|slovenia|solomon islands|somalia
+               |south africa|south sudan|spain|sri lanka|sudan|suriname|sweden
+               |switzerland|syrian arab republic|tajikistan|tanzania
+               |thailand|timor-leste|togo|tonga|trinidad and tobago|tunisia|turkiye
+               |turkmenistan|tuvalu|uganda|ukraine|united arab emirates
+               |united kingdom|united states of america|uruguay|uzbekistan|vanuatu
+               |venezuela|vietnam|yemen|zambia|zimbabwe",
+               negate = TRUE) ~ NA,
+    TRUE ~ country))
 
 ## 7.7 / Set All To Upper case
-# 
-# candy_joined <- candy_joined %>% 
-#   mutate(country = str_to_title(country))
+
+candy_joined <- candy_joined %>%
+  mutate(country = str_to_title(country))
 
 # 8. Write To .csv -----------------------------------------------------------
 
@@ -409,7 +438,11 @@ rm(candy_2016_long)
 rm(candy_2017)
 rm(candy_2017_clean)
 rm(candy_2017_long)
-# rm(candy_joined)
+rm(candy_joined)
+rm(non_alpha_numeric_pattern)
+rm(non_digit_pattern)
+rm(not_candy)
+rm(pattern_to_be_removed_from_2017_data)
 
 
 
