@@ -1,4 +1,4 @@
-# Candy Analysis
+# Dirty Data Project
 
 ## April 2023
 
@@ -6,9 +6,9 @@
 
 ## Introduction
 
-The `dirty_data_codeclan_project_stuartstenhouse` repository contains two projects titled `cake` and `candy` which are projects completed as part of the CodeClan Professional Data Analysis Course. Togther the projects form the first projected completed on the course, titled the `Dirty Data Project`.
+The `dirty_data_codeclan_project_stuartstenhouse` repository contains two tasks titled `cake` and `candy` which are tasks completed as part of the CodeClan Professional Data Analysis Course. Together the tasks form the first project completed on the course, titled the `Dirty Data Project`.
 
-A short description of each project is included below; however, for more detailed information please see the individual `README.md` files.
+A short description of each task is included below; however, for more detailed information please see the individual `README.md` files.
 
 -   `cake`: Cleaning and analysis of data relating to different cake ingredients.
 -   `candy`: Cleaning and analysis of data relating to individual candy preferences.
