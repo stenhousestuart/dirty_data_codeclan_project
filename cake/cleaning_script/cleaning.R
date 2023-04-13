@@ -43,7 +43,6 @@ cake_ingredients_clean <- cake_ingredients_clean %>%
 
 ### Only `Sour Cream` had a measure of NA, so the below was sufficient. This
 ### could be improved however to only update when ingredient is Sour Cream.
-### Perhaps using a case when?
 
 cake_ingredients_clean <- cake_ingredients_clean %>%
   mutate(measure = coalesce(measure, "Cup"))
