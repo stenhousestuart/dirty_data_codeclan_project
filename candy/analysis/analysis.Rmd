@@ -16,7 +16,7 @@ source(here("cleaning_script/cleaning.R"))
 # Reads clean data from .csv and assigns to an object for analysis.
 candy_analysis <- read_csv(here("data/clean_data/candy_clean.csv"))
 
-# Add Score Column
+# Add Score Column Required for Questions 6, 7 & 8.
 candy_analysis_with_scoring <- candy_analysis %>%
   mutate(score = case_when(
     response == "JOY" ~ 1,

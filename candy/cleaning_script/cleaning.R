@@ -125,17 +125,8 @@ candy_joined <- candy_joined %>%
 ### Initial number of distinct candy_type values: 126
 
 ### Details:
-### Some candy_type data looked to have been entered with slight spelling
-### discrepancies. Personal judgement and online research were used to 
-### standardise spelling where possible for more accurate analysis. 
-### "a friend to diabetes" text was removed from "sweetums a friend to diabetes" 
-### to create one distinct "sweetums" candy_type & "x" removed from 
-### "x100 grand bar" to create one distinct "100 grand bar" candy_type. Data
-### also suggested that entries mentioning "anonymous brown globs that come 
-### in black and orange wrappers" were "mary janes" and so any candy_type
-### referencing this text was updated to "mary janes". Furthermore, it was
-### decided to leave all three "licorice" types ("licorice yes black", 
-### "licorice not black" and "licorice") to maintain specific preferences.
+### Please see the associated README.md for details of assumptions and judgements
+### made at this stage.
 
 candy_joined <- candy_joined %>%
   mutate(candy_type = str_replace_all(candy_type, "a friend to diabetes", ""),
@@ -151,15 +142,8 @@ candy_joined <- candy_joined %>%
 ## 5.3 / Remove Non-Candy Items
 
 ### Details:
-### Based on online research using the websites of popular American Candy stores 
-### a list of candy_type data that did not appear to be candy was created. In
-### addition details from the data source were taken into consideration, 
-### resulting in 6x M&M entries being removed as these appear to have been added
-### as a 'hidden proxy question' relating to voting intentions as opposed to
-### being candy types. For the avoidance of doubt, personal judgment and 
-### discretion was also used at this stage and a full list of what was 
-### considered not to be candy can be found below. Where this was the case, 
-### these observations were filtered from the data.
+### Please see the associated README.md for details of assumptions and judgements
+### made at this stage.
 
 not_candy <- c("vials of pure high fructose corn syrup for main lining into your vein", 
                "cash or other forms of legal tender", "dental paraphenalia",
@@ -186,29 +170,38 @@ candy_joined <- candy_joined %>%
 
 # 6. Tidy `age` Data --------------------------------------------------------------
 
-## 6.1 / Set any age values that contain non-numeric characters to NA.
+## 6.1 / Set any age values that contain characters that aren't 0-9 or . to NA
 
-### Initial number of distinct age values: 274
+### Number of responses with age value: 9032
 
 ### Details:
-### A wide range of text was entered as age data by respondents. Considering
-### project time constraints and my current proficiency level, for the purposes 
-### of this project any age data which contains non-numeric text will be updated 
-### to NA. It is recognised that this may lead to the loss of some usable data
-### and therefor, for transparency, full working can be seen below.
+### Please see the associated README.md for details of assumptions and judgements
+### made at this stage.
 
-non_digit_pattern <- "[\\D]+"
+candy_joined <- candy_joined %>%
+  mutate(age = str_trim(age))
+
+non_digit_pattern <- "[^0-9 .]"
 
 candy_joined <- candy_joined %>%
   mutate(age = str_replace_all(age, non_digit_pattern, NA_character_))
 
-### Number of distinct age values after updating any with non-numeric to NA: 83
+### Number of responses with age value after update: 8888
 
 ## 6.2 / Set class to numeric
+
 candy_joined <- candy_joined %>%
   mutate(age = as.numeric(age))
 
-## 6.3 / Set any value greater than 116 to NA.
+## 6.3 / Update any values with invalid decimal places (eg. not .0) to NA.
+
+candy_joined <- candy_joined %>%
+  mutate(age = if_else(age %in% c(0.62, 18.17, 18.75, 23.2, 39.4, 44.4444, 
+                                  70.5), NA, age))
+
+### Number of responses with age value after update: 8880
+
+## 6.4 / Set any value greater than 116 to NA.
 
 ### Details:
 ### 116 has been selected as according to online research this is the current 
@@ -217,18 +210,15 @@ candy_joined <- candy_joined %>%
 candy_joined <- candy_joined %>%
   mutate(age = if_else(age > 116, NA, age))
 
-### Number of distinct age values after updating any > 116 to NA: 80
+### Number of responses with age value after update: 8867
 
 # 7. Tidy `country` Data ----------------------------------------------------------
 
 ### Initial number of distinct country values: 169
 
 ### Details:
-### Some country data looked to have been entered with slight spelling
-### discrepancies. Personal judgement and online research were used to 
-### standardise spelling where possible for more accurate analysis. When cleaning 
-### the data a certain amount of personal judgement has been used to standardise 
-### the formatting and spelling of country data provided. Working is provided below.
+### Please see the associated README.md for details of assumptions and judgements
+### made at this stage.
 
 ## 7.1 / Remove Non-Alpha-Numeric Values
 
@@ -251,14 +241,9 @@ candy_joined <- candy_joined %>%
 
 ## 7.4 / Standardise Version of USA Used.
 
-### When reviewing the country data 42 variations of what it's believed were
-### intended to mean "United States of America" were found, totaling 3077 
-### responses. 7 of these variations were used in over 10 responses and in total
-### these made up 3020 responses or 98% of responses where it's believed the
-### respondents country was "United States of America". With this in mind, these
-### 7 variations were chosen to be re-coded (see below) and the others left to
-### be updated to NA in step 7.9 when they fail to match against the country
-### list.
+### Details:
+### Please see the associated README.md for details of assumptions and judgements
+### made at this stage.
 
 candy_joined <- candy_joined %>%
   mutate(country = recode(country,
@@ -269,13 +254,6 @@ candy_joined <- candy_joined %>%
                           "us" = "united states of america",
                           "usa" = "united states of america"))
 
-### This process also flagged to country values which contained 2 country names
-### "not the usa or canada" and "i pretend to be from canada but i am really 
-### from the united states". Because of problems encountered in later cleaning
-### stages which I believe these may have been contributing to and because these 
-### were only associated to 1 response each, I decided to update these to blank
-### to be updated to NA when not matched on the country list.
-
 candy_joined <- candy_joined %>%
   mutate(country = recode(country,
                           "not the usa or canada" = "",
@@ -285,16 +263,9 @@ candy_joined <- candy_joined %>%
 
 ## 7.5 / States In the USA Entered As Country
 
-### When reviewing the country data at this stage I noticed that some states in
-### the USA looked to have provided as the country. To decide an appropriate
-### approach to these, I looked at how many times this had occured. I found
-### That 5 US states had been entered as the country ('alaska', 'new jersey',
-### 'new york', 'north carolina' and 'california') and that each had been used
-### only once. With this in mind, I decided that due to only being related to 5
-### responses, leaving these to update to NA when they failed to match against
-### the country list would not adversely impact the analysis. The code used for
-### checking for US State data has been left for reference below, but has been
-### commented out as it is not required for cleaning.
+### Details:
+### This code has been intentionally commented out. Please see the associated 
+### made at this stage. README.md for details.
 
 ### List of US States
 
@@ -318,16 +289,8 @@ candy_joined <- candy_joined %>%
 
 ## 7.6 / Update UK Countries
 
-### As one of the analysis questions asks about UK values, the decision was made
-### to group England, Scotland, Wales and Northern Ireland entries under UK.
-### When reviewing the data, excluding those already specified as
-### "United Kingdom", 4 entries that would fall in the category of the
-### United Kingdom were identified ("united kindom", "scotland", "endland",
-### "england" and "uk") which were linked to 1, 5, 1, 5 and 30 responses in turn.
-### I therefor decided to recode values used 5 or more times, which would result 
-### in only 2 responses having their country value updated to NA when they 
-### failed to match the country list believing would not adversely impact the 
-### analysis.
+### Please see the associated README.md for details of assumptions and judgements
+### made at this stage.
 
 candy_joined <- candy_joined %>%
   mutate(country = recode(country,
@@ -339,15 +302,9 @@ candy_joined <- candy_joined %>%
 
 ## 7.7 / Country Language Variations
 
-### When reviewing the data I noticed that some countries data was not in English
-### and I intended to match against an English language country list. These were
-### "españa" and "brasil". Both were linked to only one variation and in-line
-### with other steps when cleaning the country data, I decided that leaving this
-### to update to NA when they did not match to the country list would not adversely
-### impact the analysis. However, to demonstrate how these could be recoded,
-### the code for this has been included below and commented out. The code for
-### checking the usages of each variation has also been included but commented
-### out as it is not required for cleaning.
+### Details:
+### This code has been intentionally commented out. Please see the associated 
+### made at this stage. README.md for details.
 
 # language_country_check <- candy_joined %>%
 #   distinct(response_id, .keep_all = TRUE) %>% 
@@ -364,11 +321,9 @@ candy_joined <- candy_joined %>%
 
 ## 7.8 / Prefix Variations
 
-## In two cases I encountered problems with the prefix "the" creating seperate
-## country values for both "the netherlands" and "the united states of america".
-## Because of problems encountered in later cleaning stages which I believe 
-## these may have been contributing to, these were both recoded to remove the
-## prefix.
+### Details:
+### Please see the associated README.md for details of assumptions and judgements
+### made at this stage.
 
 candy_joined <- candy_joined %>%
   mutate(country = recode(country,
@@ -379,25 +334,14 @@ candy_joined <- candy_joined %>%
 
 ## 7.9 / Remove Non Country Values
 
-### For the next stage, I sourced a full country list from 
-### "https://github.com/stefangabos/world_countries/" to compare my country
-### data against. Considering project  time constraints and my own current 
-### proficiency level, for the purposes of this project any country data which 
-### does not match will be updated to NA. It is recognised that requiring an
-### exact match may lead to the loss of some data, in particular where the list
-### requires country values to be formatted in a particular way, for example
-### in cases where some of the country name is in parenthesis. There are 5
-### countries where this is the case and only 2 responses may have been impacted
-### both of which had a country values of "korea". Due to being uncertain if this
-### related to "korea (democratic people's republic of)" or "korea, republic of"
-### and as only 2 responses were effected, this was left to update to NA. The
-### list was however updated to reflect the preferred formatting of 
-### "united kingdom" where set earlier in the cleaning process.
+### Details:
+### Please see the associated README.md for details of assumptions and judgements
+### made at this stage.
 
-## It's acknowledged that the below section of code does not follow expected 
-## style guidelines due to it's length. Unfortunately I encountered some bugs 
-## when spreading this over multiple lines and was unable to correct this in time
-## prior to submission.
+### It's acknowledged that the below section of code does not follow expected 
+### style guidelines due to it's length. Unfortunately I encountered some bugs 
+### when spreading this over multiple lines and was unable to correct this in time
+### prior to submission.
 
 candy_joined <- candy_joined %>%
   mutate(country = case_when(
@@ -414,6 +358,7 @@ candy_joined <- candy_joined %>%
 
 # 8. Tidy `gender` Data ---------------------------------------------------
 
+### Details:
 ### The original data contained 4 gender values 'Male', 'Gender', 'Other',
 ### 'I'd rather not say' and blank values which have been stored as NA.
 ### As each of these values represents a unique way of answering (or not
@@ -422,17 +367,18 @@ candy_joined <- candy_joined %>%
 
 # 9. Tidy `going_out_trick_or_treating` Data ----------------------------------
 
+### Details:
+### The original data contained a character string of the values "Yes", "No" or
+### blank if unanswered which has been stored as NA. As their are only 2 valid 
+### completed responses ("Yes" and "No") this data has been updated to the 
+### logical type, with TRUE indicating "Yes" and FALSE indicating "No".
+
 candy_joined <- candy_joined %>%
   mutate(going_out_trick_or_treating = case_when(
     going_out_trick_or_treating == "Yes" ~ "TRUE",
     going_out_trick_or_treating == "No" ~ "FALSE",
     TRUE ~ going_out_trick_or_treating),
     going_out_trick_or_treating = as.logical(going_out_trick_or_treating))
-
-### The original data contained a character string of the values "Yes", "No" or
-### blank if unanswered which has been stored as NA. As their are only 2 valid 
-### completed responses ("Yes" and "No") this data has been updated to the 
-### logical type, with TRUE indicating "Yes" and FALSE indicating "No".
 
 # 10. Write To .csv -----------------------------------------------------------
 
