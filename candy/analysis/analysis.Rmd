@@ -253,7 +253,7 @@ test_that("Character or Logical input returns an error", {
 
 ```{r}
 
-most_popular_candy(candy_analysis_with_scoring, 2015)
+most_popular_candy_by_year(candy_analysis_with_scoring, 2015)
 most_popular_candy_by_year_minus_any_full_size(candy_analysis_with_scoring, 2015)
 
 ```
@@ -261,7 +261,7 @@ most_popular_candy_by_year_minus_any_full_size(candy_analysis_with_scoring, 2015
 
 ```{r}
 
-most_popular_candy(candy_analysis_with_scoring, 2016)
+most_popular_candy_by_year(candy_analysis_with_scoring, 2016)
 most_popular_candy_by_year_minus_any_full_size(candy_analysis_with_scoring, 2016)
 
 ```
@@ -269,7 +269,7 @@ most_popular_candy_by_year_minus_any_full_size(candy_analysis_with_scoring, 2016
 
 ```{r}
 
-most_popular_candy(candy_analysis_with_scoring, 2017)
+most_popular_candy_by_year(candy_analysis_with_scoring, 2017)
 most_popular_candy_by_year_minus_any_full_size(candy_analysis_with_scoring, 2017)
 
 ```

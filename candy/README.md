@@ -30,6 +30,10 @@ Put some tables here!
 ------------------------------------------------------------------------
 
 ## Areas for Future Development and Improvement
+- More efficient cleaning of country data.
+- Extract of year values from timestamp where available (NB - I did have code 
+in place for this but there were unexpected knock on effects that I ran out
+of time to review.)
 
 ------------------------------------------------------------------------
 

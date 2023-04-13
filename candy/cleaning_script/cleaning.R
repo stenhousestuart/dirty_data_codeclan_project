@@ -15,7 +15,7 @@ candy_2015 <- read_excel(here("data/raw_data/boing-boing-candy-2015.xlsx"))
 candy_2016 <- read_excel(here("data/raw_data/boing-boing-candy-2016.xlsx"))
 candy_2017 <- read_excel(here("data/raw_data/boing-boing-candy-2017.xlsx"))
 
-# 2. Select Data and Clean Variable Names ------------------------------------
+# 2. Select Data ------------------------------------
 
 ## Various steps are completed at this stage for each data set. For clarity,
 ## in-line comments have been added below.
@@ -28,8 +28,8 @@ candy_2015_clean <- candy_2015 %>%
   # Drops any fully empty rows, none dropped.
   remove_empty("rows") %>% 
   # Rename columns where required.
-  rename('age' = 'how_old_are_you',
-         'going_out_trick_or_treating' = 'are_you_going_actually_going_trick_or_treating_yourself')
+  rename("age" = "how_old_are_you",
+         "going_out_trick_or_treating" = "are_you_going_actually_going_trick_or_treating_yourself")
 
 candy_2016_clean <- candy_2016 %>%
   # Select Columns 1:6 and those beginning with `[`
@@ -67,21 +67,21 @@ candy_2015_clean <- candy_2015_clean %>%
   mutate(gender = NA,
          .before = "going_out_trick_or_treating") %>%
   mutate(country = NA,
-         .before = age) %>%
+         .before = age) %>% 
   mutate(year = as.integer(2015))
 
 ## 3.2 / 2016 - Add response_id, age, country, gender, year
 
 candy_2016_clean <- candy_2016_clean %>%
-  mutate(response_id = str_c("2016", row_number()), 
+  mutate(response_id = str_c("2016", row_number()),
          .before = "going_out_trick_or_treating") %>%
   mutate(year = as.integer(2016))
 
 ## 3.3 / 2017 - Add response_id, age, country, gender, year
 
 candy_2017_clean <- candy_2017_clean %>%
-  mutate(response_id = str_c("2017", row_number()), 
-         .before = "going_out_trick_or_treating") %>% 
+  mutate(response_id = str_c("2017", row_number()),
+         .before = "going_out_trick_or_treating") %>%
   mutate(year = as.integer(2017))
 
 # 4. Pivot Data To Long Format & Join --------------------------------------------------------------
@@ -93,7 +93,7 @@ candy_2015_long <- candy_2015_clean %>%
                names_to = "candy_type", 
                values_to = "response") 
 
-## 4.3 / Pivot Long 2016: No. Observations after pivot should be 127159
+## 4.2 / Pivot Long 2016: No. Observations after pivot should be 127159
 
 candy_2016_long <- candy_2016_clean %>%
   pivot_longer(cols = 6:106, 
@@ -249,120 +249,132 @@ candy_joined <- candy_joined %>%
 
 ### Number of distinct country values after 7.1, 7.2 and 7.3: 132
 
-## 7.4 / Update USA Based On Partial String Matches
+## 7.4 / Update USA Based On Exact String Matches
 
-candy_joined <- candy_joined %>%
-  mutate(country = case_when(
-    str_detect(country, "state") ~ "united states of america",
-    str_detect(country, "usa")  ~ "united states of america",
-    str_detect(country, "us")  ~ "united states of america",
-    str_detect(country, "u s a")  ~ "united states of america",
-    str_detect(country, "america")  ~ "united states of america",
-    str_detect(country, "united sates")  ~ "united states of america",
-    str_detect(country, "murica")  ~ "united states of america",
-    str_detect(country, "merica")  ~ "united states of america",
-    str_detect(country, "united stetes")  ~ "united states of america",
-    str_detect(country, "united staes")  ~ "united states of america",
-    str_detect(country, "u s")  ~ "united states of america",
-    str_detect(country, " merica")  ~ "united states of america",
-    str_detect(country, "amerca")  ~ "united states of america",
-    str_detect(country, "united ststes")  ~ "united states of america",
-    str_detect(country, "united statss")  ~ "united states of america",
-    str_detect(country, "murrika")  ~ "united states of america",
-    str_detect(country, "the yoo ess of aaayyyyyy")  ~ "united states of america",
-    TRUE ~ country
-  ))
-
-### Number of distinct country values after updating USA values: 87
-
-## 7.6 / If A US State Is Provided, Update To "united states of america"
+### When reviewing the country data 42 variations of what it's believed were
+### intended to mean "United States of America" were found, totaling 3077 
+### responses. 7 of these variations were used in over 10 responses and in total
+### these made up 3020 responses or 98% of responses where it's believed the
+### respondents country was "United States of America". With this in mind, these
+### 7 variations were chosen to be re-coded (see below) and the others left to
+### be updated to NA in step 7.9 when they fail to match against the country
+### list.
 
 candy_joined <- candy_joined %>%
   mutate(country = recode(country,
-                          "alaska" = "united states of america",
-                          "alabama" = "united states of america",
-                          "arkansas" = "united states of america",
-                          "american samoa" = "united states of america",
-                          "california" = "united states of america",
-                          "colorado" = "united states of america",
-                          "connecticut" = "united states of america",
-                          "district of columbia" = "united states of america",
-                          "delaware" = "united states of america",
-                          "florida" = "united states of america",
-                          "georgia" = "united states of america",
-                          "guam" = "united states of america",
-                          "hawaii" = "united states of america",
-                          "iowa" = "united states of america",
-                          "idaho" = "united states of america",
-                          "illinois" = "united states of america",
-                          "indiana" = "united states of america",
-                          "kansas" = "united states of america",
-                          "kentucky" = "united states of america",
-                          "louisiana" = "united states of america",
-                          "massachusetts" = "united states of america",
-                          "maryland" = "united states of america",
-                          "maine" = "united states of america",
-                          "michigan" = "united states of america",
-                          "minnesota" = "united states of america",
-                          "missouri" = "united states of america",
-                          "mississippi" = "united kingdom",
-                          "montana" = "united states of america",
-                          "north carolina" = "united states of america",
-                          "north dakota" = "united states of america",
-                          "nebraska" = "united states of america",
-                          "new hampshire" = "united states of america",
-                          "new jersey" = "united states of america",
-                          "new mexico" = "united states of america",
-                          "new york" = "united states of america",
-                          "ohio" = "united states of america",
-                          "oklahoma" = "united states of america",
-                          "oregon" = "united states of america",
-                          "pennsylvania" = "united states of america",
-                          "puerto rico" = "united states of america",
-                          "rhode island" = "united states of america",
-                          "south carolina" = "united states of america",
-                          "tennessee" = "united states of america",
-                          "texas" = "united states of america",
-                          "utah" = "united states of america",
-                          "virginia" = "united states of america",
-                          "virgin islands" = "united states of america",
-                          "vermont" = "united states of america",
-                          "washington" = "united states of america",
-                          "wisconsin" = "united states of america",
-                          "west virginia" = "united states of america",
-                          "wyoming" = "united states of america"))
+                          "america" = "united states of america",
+                          "u s" = "united states of america",
+                          "u s a" = "united states of america",
+                          "united states" = "united states of america",
+                          "us" = "united states of america",
+                          "usa" = "united states of america"))
 
-### Number of distinct country values after updating states to USA: 82 
+### This process also flagged to country values which contained 2 country names
+### "not the usa or canada" and "i pretend to be from canada but i am really 
+### from the united states". Because of problems encountered in later cleaning
+### stages which I believe these may have been contributing to and because these 
+### were only associated to 1 response each, I decided to update these to blank
+### to be updated to NA when not matched on the country list.
+
+candy_joined <- candy_joined %>%
+  mutate(country = recode(country,
+                          "not the usa or canada" = "",
+                          "i pretend to be from canada  but i am really from the united states" = ""))
+
+### Number of distinct country values after 7.4: 125
+
+## 7.6 / States In the USA Entered As Country
+
+### When reviewing the country data at this stage I noticed that some states in
+### the USA looked to have provided as the country. To decide an appropriate
+### approach to these, I looked at how many times this had occured. I found
+### That 5 US states had been entered as the country ('alaska', 'new jersey',
+### 'new york', 'north carolina' and 'california') and that each had been used
+### only once. With this in mind, I decided that due to only being related to 5
+### responses, leaving these to update to NA when they failed to match against
+### the country list would not adversely impact the analysis. The code used for
+### checking for US State data has been left for reference below, but has been
+### commented out as it is not required for cleaning.
+
+### List of US States
+
+# usa_states <- c("alaska", "alabama", "arkansas", "american samoa", "arizona",
+#                 "california", "colorado", "connecticut", "district of columbia",
+#                 "delaware", "florida", "georgia", "guam", "hawaii", "iowa",
+#                 "idaho", "illinois", "indiana", "kansas", "kentucky",
+#                 "louisiana", "massachusetts", "maryland", "maine", "michigan",
+#                 "minnesota", "missouri", "mississippi", "montana", "north carolina",
+#                 "north dakota", "nebraska", "new hampshire", "new jersey",
+#                 "new mexico", "nevada", "new york", "ohio", "oklahoma", "oregon",
+#                 "pennsylvania", "puerto rico", "rhode island", "south carolina",
+#                 "south dakota", "tennessee", "texas", "utah", "virginia",
+#                 "virgin islands", "vermont", "washington", "wisconsin",
+#                 "west virginia", "wyoming")
+
+### Check if any US states provided as country
+# usa_state_check <- candy_joined %>%
+#   distinct(response_id, .keep_all = TRUE) %>% 
+#   filter(country %in% usa_states)
 
 ## 7.7 / Update UK Countries
 
 ### As one of the analysis questions asks about UK values, the decision was made
-### to group any England, Scotland, Wales and Northern Ireland entries under UK.
-
-candy_joined <- candy_joined %>% 
-  mutate(country = case_when(
-    str_detect(country, "england") ~ "united kingdom",
-    str_detect(country, "united kingdom")  ~ "united kingdom",
-    str_detect(country, "united kindom")  ~ "united kingdom",
-    str_detect(country, "u k")  ~ "united kingdom",
-    str_detect(country, "endland")  ~ "united kingdom",
-    str_detect(country, "scotland")  ~ "united kingdom",
-    str_detect(country, "uk")  ~ "united kingdom",
-    TRUE ~ country
-  ))
-
-### Number of distinct country values after UK updates: 76
-
-## 7.8 / Update To English Version of Country Names / Misc.
+### to group England, Scotland, Wales and Northern Ireland entries under UK.
+### When reviewing the data, excluding those already specified as
+### "United Kingdom", 4 entries that would fall in the category of the
+### United Kingdom were identified ("united kindom", "scotland", "endland",
+### "england" and "uk") which were linked to 1, 5, 1, 5 and 30 responses in turn.
+### I therefor decided to recode values used 5 or more times, which would result 
+### in only 2 responses having their country value updated to NA when they 
+### failed to match the country list believing would not adversely impact the 
+### analysis.
 
 candy_joined <- candy_joined %>%
   mutate(country = recode(country,
-                         "españa" = "spain",
-                         "brasil" = "brazil",
-                         "the netherlands" = "netherlands"))
+                          "england" = "united kingdom",
+                          "scotland" = "united kingdom",
+                          "uk" = "united kingdom"))
 
-### Number of distinct country values after UK updates: 74 (NB - Only 2 less
-### as there was no "Brazil" value initially).
+### Number of distinct country values after 7.7: 122
+
+## 7.8 / Review Country Language Variations
+
+### When reviewing the data I noticed that some countries data was not in English
+### and I intended to match against an English language country list. These were
+### "españa" and "brasil". Both were linked to only one variation and in-line
+### with other steps when cleaning the country data, I decided that leaving this
+### to update to NA when they did not match to the country list would not adversely
+### impact the analysis. However, to demonstrate how these could be recoded,
+### the code for this has been included below and commented out. The code for
+### checking the usages of each variation has also been included but commented
+### out as it is not required for cleaning.
+
+# language_country_check <- candy_joined %>%
+#   distinct(response_id, .keep_all = TRUE) %>% 
+#   filter(country %in% c("españa", "spain", "brasil")) %>%
+#   group_by(country) %>% 
+#   summarise(total_usages_by_name = n())
+# 
+# candy_joined <- candy_joined %>%
+#   mutate(country = recode(country,
+#                          "españa" = "spain",
+#                          "brasil" = "brazil"))
+
+### Number of distinct country values after 7.8: 123
+
+## 7.10 / Review Prefix Variations
+
+## In two cases I encountered problems with the prefix "the" creating seperate
+## country values for both "the netherlands" and "the united states of america".
+## Because of problems encountered in later cleaning stages which I believe 
+## these may have been contributing to, these were both recoded.
+
+candy_joined <- candy_joined %>%
+  mutate(country = recode(country,
+                          "the netherlands" = "netherlands",
+                          "the united states of america" = "united states of america"))
+
+### Number of distinct country values after 7.9: 120
 
 ## 7.9 / Remove Non Country Values
 
@@ -370,52 +382,63 @@ candy_joined <- candy_joined %>%
 ### "https://github.com/stefangabos/world_countries/" to compare my country
 ### data against. Considering project  time constraints and my own current 
 ### proficiency level, for the purposes of this project any country data which 
-### does not match will be updated to NA. It is recognised that this may lead 
-### to the loss of some usable data and so to try and mitigate this, 
-### personal judgement was used to update some country names from their formal
-### name to a shorter version eg. "Bolivia (Plurinational State of)" 
-### updated to "Bolivia". It is recognised that this may lead to the loss of some usable data
-### and therefor, for transparency, the full country name list used is below.
+### does not match will be updated to NA. It is recognised that requiring an
+### exact match may lead to the loss of some data, in particular where the list
+### requires country values to be formatted in a particular way, for example
+### in cases where some of the country name is in parenthesis. There are 5
+### countries where this is the case and only 2 responses may have been impacted
+### both of which had a country values of "korea". Due to being uncertain if this
+### related to "korea (democratic people's republic of)" or "korea, republic of"
+### and as only 2 responses were effected, this was left to update to NA. The
+### list was however updated to reflect the preferred formatting of 
+### "united kingdom" where set earlier in the cleaning process.
 
 candy_joined <- candy_joined %>%
   mutate(country = case_when(
-    str_detect(country, "afghanistan|albania|algeria|andorra|angola|antigua and barbuda
-               |argentina|armenia|australia|austria|azerbaijan|bahamas|bahrain
-               |bangladesh|barbados|belarus|belgium|belize|benin|bhutan
-               |bolivia|bosnia and herzegovina
+    str_detect(country, "afghanistan|albania|algeria|andorra|angola
+               |antigua and barbuda|argentina|armenia|australia|austria
+               |azerbaijan|bahamas|bahrain|bangladesh|barbados
+               |belarus|belgium|belize|benin|bhutan
+               |bolivia (plurinational state of)|bosnia and herzegovina
                |botswana|brazil|brunei darussalam|bulgaria|burkina faso
-               |burundi|cabo verde|cambodia|cameroon|canada|central african republic
-               |chad|chile|china|colombia|comoros|congo|congo
-               |costa rica|cote d'ivoire|croatia|cuba|cyprus|czechia|denmark|djibouti
-               |dominica|dominican republic|ecuador|egypt|el salvador|equatorial guinea
-               |eritrea|estonia|eswatini|ethiopia|fiji|finland|france|gabon|gambia
-               |georgia|germany|ghana|greece|grenada|guatemala|guinea|guinea-bissau
-               |guyana|haiti|honduras|hungary|iceland|india|indonesia
-               |iran|iraq|ireland|israel|italy|jamaica
-               |japan|jordan|kazakhstan|kenya|kiribati
-               |democratic people's republic of korea|republic of korea
-               |kuwait|kyrgyzstan|lao people's democratic republic|latvia|lebanon
-               |lesotho|liberia|libya|liechtenstein|lithuania|luxembourg
-               |madagascar|malawi|malaysia|maldives|mali|malta|marshall islands
-               |mauritania|mauritius|mexico|micronesia
-               |moldova|monaco|mongolia|montenegro|morocco|mozambique
-               |myanmar|namibia|nauru|nepal|netherlands|new zealand|nicaragua
-               |niger|nigeria|north macedonia|norway|oman|pakistan|palau|panama
-               |papua new guinea|paraguay|peru|philippines|poland|portugal|qatar
-               |romania|russian federation|rwanda|saint kitts and nevis
-               |saint lucia|saint vincent and the grenadines|samoa|san marino
-               |sao tome and principe|saudi arabia|senegal|serbia|seychelles
-               |sierra leone|singapore|slovakia|slovenia|solomon islands|somalia
-               |south africa|south sudan|spain|sri lanka|sudan|suriname|sweden
-               |switzerland|syrian arab republic|tajikistan|tanzania
-               |thailand|timor-leste|togo|tonga|trinidad and tobago|tunisia|turkiye
-               |turkmenistan|tuvalu|uganda|ukraine|united arab emirates
-               |united kingdom|united states of america|uruguay|uzbekistan|vanuatu
-               |venezuela|vietnam|yemen|zambia|zimbabwe",
+               |burundi|cabo verde|cambodia|cameroon
+               |canada|central african republic|chad|chile|china|colombia|comoros
+               |congo|congo, democratic republic of the|costa rica|cote d'ivoire
+               |croatia|cuba|cyprus|czechia|denmark|djibouti|dominica
+               |dominican republic|ecuador|egypt|el salvador|equatorial guinea
+               |eritrea|estonia|eswatini|ethiopia|fiji|finland|france|gabon
+               |gambia|georgia|germany|ghana|greece|grenada|guatemala
+               |guinea|guinea-bissau|guyana|haiti|honduras|hungary
+               |iceland|india|indonesia|iran (islamic republic of)|iraq
+               |ireland|israel|italy|jamaica|japan|jordan|kazakhstan
+               |kenya|kiribati|korea (democratic people's republic of)
+               |korea republic of|kuwait|kyrgyzstan
+               |lao people's democratic republic|latvia|lebanon|lesotho
+               |liberia|libya|liechtenstein|lithuania|luxembourg
+               |madagascar|malawi|malaysia|maldives|mali|malta
+               |marshall islands|mauritania|mauritius|mexico
+               |micronesia (federated states of)|moldova republic of
+               |monaco|mongolia|montenegro|morocco|mozambique
+               |myanmar|namibia|nauru|nepal|netherlands|new zealand
+               |nicaragua|niger|nigeria|north macedonia|norway|oman
+               |pakistan|palau|panama|papua new guinea|paraguay|peru
+               |philippines|poland|portugal|qatar|romania|russian federation
+               |rwanda|saint kitts and nevis|saint lucia
+               |saint vincent and the grenadines|samoa|san marino
+               |sao tome and principe|saudi arabia|senegal|serbia
+               |seychelles|sierra leone|singapore|slovakia|slovenia
+               |solomon islands|somalia|south africa|south sudan|spain
+               |sri lanka|sudan|suriname|sweden|switzerland
+               |syrian arab republic|tajikistan|tanzania united republic of
+               |thailand|timor-leste|togo|tonga|trinidad and tobago
+               |tunisia|turkiye|turkmenistan|tuvalu|uganda|ukraine|united arab emirates
+               |united kingdom|united states of america|uruguay|uzbekistan
+               |vanuatu|venezuela (bolivarian republic of)|viet nam|yemen|zambia
+               |zimbabwe",
                negate = TRUE) ~ NA,
     TRUE ~ country))
 
-### Number of distinct country values after match checks: 28
+### Number of distinct country values after match checks: 26
 
 ## 7.7 / Set All To Upper case
 
@@ -468,10 +491,3 @@ rm(non_alpha_numeric_pattern)
 rm(non_digit_pattern)
 rm(not_candy)
 rm(pattern_to_be_removed_from_2017_data)
-
-
-
-
-
-
-
