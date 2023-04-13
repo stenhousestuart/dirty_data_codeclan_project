@@ -43,7 +43,7 @@ The analysis notebook contains a combination of plain text and R code chunks and
 
 The process of cleaning the data required that a number of assumptions and personal judgements be made. These were made within the context of my own proficiency and knowledge at the time and also took into consideration the timeframe for completing the project.
 
-Details of these have been included as comments within the cleaning script, next to the section of code that they apply to. These have also been included below, with the number indicating the section of the cleaning script that they apply to.
+Details of the assumptions and personal judgments made have been included below next to the section of the cleaning script that they apply to.
 
 -   **3. / Add Missing Columns:**\
     Where `age`, `country`, `gender` and/or `year` data was not collected as part of the questionnaire, this has been added as `NA`.
@@ -54,7 +54,7 @@ Details of these have been included as comments within the cleaning script, next
     Based on online research using the websites of popular American Candy stores a list of `candy_type` data that did not appear to be candy was created. In addition, details from the data source were taken into consideration, resulting in 6x M&M entries being removed as these appear to have been added as a *'hidden proxy question'* relating to voting intentions as opposed to being candy types. For the avoidance of doubt, personal judgment was also used at this stage and a full list of what was considered not to be candy can be within
 the cleaning step. Where this was the case, these observations were filtered from the data.
 
--   **6.1, 6.2, 6.3, 6.4 / Tidying Age Values**\
+-   **6.1, 6.2, 6.3, 6.4 / Clean Age Values**\
     A wide range of text was entered as `age` data by respondents as this had been free text entry. All values which contained a character that was not numeric or a decimal point was set to NA. The variable type was then updated from `character` to `numeric` and any values with a value other than 0 after the decimal point deemed to be an invalid age and updated to NA. Finally, any value greater than 116 was set to NA with 116 being selected as the maximum as according to online research this is the current age of the oldest known living human. These steps resulted in the total number of responses with age values reducing from 9032 to 8867.
     
 -   **7.4 / Standardise Version of USA Used:**\
@@ -79,10 +79,10 @@ the cleaning step. Where this was the case, these observations were filtered fro
 
     *NB: It's recognised that the code used in step 7.9 does not follow expected style guidelines due to it's length. Unfortunately I encountered some bugs when spreading this over multiple lines and was unable to correct this in time prior to submission.*
 
--   **8 / Tidy `gender` Data:**\
+-   **8 / Clean `gender` Data:**\
     The original data contained 4 gender values 'Male', 'Gender', 'Other', 'I'd rather not say' and blank values which have been stored as NA. As each of these values represents a unique way of answering (or not answering) and I could not think of any benefits that would result from changes, no changes to the gender data have been made.
 
--   **9 / Tidy `going_out_trick_or_treating` Data:**\
+-   **9 / Clean `going_out_trick_or_treating` Data:**\
     The original data contained a character string of the values "Yes", "No" or blank if unanswered which has been stored as NA. As their are only 2 valid completed responses ("Yes" and "No") this data has been updated to the logical type, with TRUE indicating "Yes" and FALSE indicating "No". For the avoidance of doubt, NA values were left as NA.
 
 ------------------------------------------------------------------------

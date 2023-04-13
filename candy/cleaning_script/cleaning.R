@@ -114,7 +114,7 @@ candy_2017_long <- candy_2017_clean %>%
 candy_joined <- bind_rows(candy_2015_long, candy_2016_long, 
                           candy_2017_long)
   
-# 5. Tidy `candy_type` Data --------------------------------------------------
+# 5. Clean `candy_type` Data --------------------------------------------------
 
 ## 5.1 / Replace all `_` with ` `.
 candy_joined <- candy_joined %>%
@@ -168,7 +168,7 @@ candy_joined <- candy_joined %>%
 
 ### No. Observations after tidying candy_type data: 690779 (-222447).
 
-# 6. Tidy `age` Data --------------------------------------------------------------
+# 6. Clean `age` Data --------------------------------------------------------------
 
 ## 6.1 / Set any age values that contain characters that aren't 0-9 or . to NA
 
@@ -212,7 +212,7 @@ candy_joined <- candy_joined %>%
 
 ### Number of responses with age value after update: 8867
 
-# 7. Tidy `country` Data ----------------------------------------------------------
+# 7. Clean `country` Data ----------------------------------------------------------
 
 ### Initial number of distinct country values: 169
 
@@ -356,7 +356,7 @@ candy_joined <- candy_joined %>%
 candy_joined <- candy_joined %>%
   mutate(country = str_to_title(country))
 
-# 8. Tidy `gender` Data ---------------------------------------------------
+# 8. Clean `gender` Data ---------------------------------------------------
 
 ### Details:
 ### The original data contained 4 gender values 'Male', 'Gender', 'Other',
