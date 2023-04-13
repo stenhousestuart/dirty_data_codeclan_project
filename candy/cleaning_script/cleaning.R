@@ -393,52 +393,18 @@ candy_joined <- candy_joined %>%
 ### list was however updated to reflect the preferred formatting of 
 ### "united kingdom" where set earlier in the cleaning process.
 
+## It's recognised that the below section of code does not follow expected style
+## guidelines due to it's length. Unfortunately I encountered some bugs when
+## spreading this over multiple lines and was unable to correct this in time
+## prior to submission.
+
 candy_joined <- candy_joined %>%
   mutate(country = case_when(
-    str_detect(country, "afghanistan|albania|algeria|andorra|angola
-               |antigua and barbuda|argentina|armenia|australia|austria
-               |azerbaijan|bahamas|bahrain|bangladesh|barbados
-               |belarus|belgium|belize|benin|bhutan
-               |bolivia (plurinational state of)|bosnia and herzegovina
-               |botswana|brazil|brunei darussalam|bulgaria|burkina faso
-               |burundi|cabo verde|cambodia|cameroon
-               |canada|central african republic|chad|chile|china|colombia|comoros
-               |congo|congo, democratic republic of the|costa rica|cote d'ivoire
-               |croatia|cuba|cyprus|czechia|denmark|djibouti|dominica
-               |dominican republic|ecuador|egypt|el salvador|equatorial guinea
-               |eritrea|estonia|eswatini|ethiopia|fiji|finland|france|gabon
-               |gambia|georgia|germany|ghana|greece|grenada|guatemala
-               |guinea|guinea-bissau|guyana|haiti|honduras|hungary
-               |iceland|india|indonesia|iran (islamic republic of)|iraq
-               |ireland|israel|italy|jamaica|japan|jordan|kazakhstan
-               |kenya|kiribati|korea (democratic people's republic of)
-               |korea republic of|kuwait|kyrgyzstan
-               |lao people's democratic republic|latvia|lebanon|lesotho
-               |liberia|libya|liechtenstein|lithuania|luxembourg
-               |madagascar|malawi|malaysia|maldives|mali|malta
-               |marshall islands|mauritania|mauritius|mexico
-               |micronesia (federated states of)|moldova republic of
-               |monaco|mongolia|montenegro|morocco|mozambique
-               |myanmar|namibia|nauru|nepal|netherlands|new zealand
-               |nicaragua|niger|nigeria|north macedonia|norway|oman
-               |pakistan|palau|panama|papua new guinea|paraguay|peru
-               |philippines|poland|portugal|qatar|romania|russian federation
-               |rwanda|saint kitts and nevis|saint lucia
-               |saint vincent and the grenadines|samoa|san marino
-               |sao tome and principe|saudi arabia|senegal|serbia
-               |seychelles|sierra leone|singapore|slovakia|slovenia
-               |solomon islands|somalia|south africa|south sudan|spain
-               |sri lanka|sudan|suriname|sweden|switzerland
-               |syrian arab republic|tajikistan|tanzania united republic of
-               |thailand|timor-leste|togo|tonga|trinidad and tobago
-               |tunisia|turkiye|turkmenistan|tuvalu|uganda|ukraine|united arab emirates
-               |united kingdom|united states of america|uruguay|uzbekistan
-               |vanuatu|venezuela (bolivarian republic of)|viet nam|yemen|zambia
-               |zimbabwe",
+    str_detect(country, "afghanistan|albania|algeria|andorra|angola|antigua and barbuda|argentina|armenia|australia|austria|azerbaijan|bahamas|bahrain|bangladesh|barbados|belarus|belgium|belize|benin|bhutan|bolivia (plurinational state of)|bosnia and herzegovina|botswana|brazil|brunei darussalam|bulgaria|burkina faso|burundi|cabo verde|cambodia|cameroon|canada|central african republic|chad|chile|china|colombia|comoros|congo|congo, democratic republic of the|costa rica|c√¥te d'ivoire|croatia|cuba|cyprus|czechia|denmark|djibouti|dominica|dominican republic|ecuador|egypt|el salvador|equatorial guinea|eritrea|estonia|eswatini|ethiopia|fiji|finland|france|gabon|gambia|georgia|germany|ghana|greece|grenada|guatemala|guinea|guinea-bissau|guyana|haiti|honduras|hungary|iceland|india|indonesia|iran (islamic republic of)|iraq|ireland|israel|italy|jamaica|japan|jordan|kazakhstan|kenya|kiribati|korea (democratic people's republic of)|korea, republic of|kuwait|kyrgyzstan|lao people's democratic republic|latvia|lebanon|lesotho|liberia|libya|liechtenstein|lithuania|luxembourg|madagascar|malawi|malaysia|maldives|mali|malta|marshall islands|mauritania|mauritius|mexico|micronesia (federated states of)|moldova, republic of|monaco|mongolia|montenegro|morocco|mozambique|myanmar|namibia|nauru|nepal|netherlands|new zealand|nicaragua|niger|nigeria|north macedonia|norway|oman|pakistan|palau|panama|papua new guinea|paraguay|peru|philippines|poland|portugal|qatar|romania|russian federation|rwanda|saint kitts and nevis|saint lucia|saint vincent and the grenadines|samoa|san marino|sao tome and principe|saudi arabia|senegal|serbia|seychelles|sierra leone|singapore|slovakia|slovenia|solomon islands|somalia|south africa|south sudan|spain|sri lanka|sudan|suriname|sweden|switzerland|syrian arab republic|tajikistan|tanzania, united republic of|thailand|timor-leste|togo|tonga|trinidad and tobago|tunisia|t√ºrkiye|turkmenistan|tuvalu|uganda|ukraine|united arab emirates|united kingdom|united states of america|uruguay|uzbekistan|vanuatu|venezuela (bolivarian republic of)|viet nam|yemen|zambia|zimbabwe",
                negate = TRUE) ~ NA,
     TRUE ~ country))
 
-### Number of distinct country values after match checks: 26
+### Number of distinct country values after match checks: 32
 
 ## 7.7 / Set All To Upper case
 

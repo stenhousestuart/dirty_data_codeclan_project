@@ -1757,18 +1757,68 @@ display: none;
 For Analysis</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4jIExvYWRzIGBoZXJlYCBsaWJyYXJ5IHRvIHN1cHBvcnQgZmlsZSBwYXRoL2RpcmVjdG9yeSBtYW5hZ2VtZW50LlxubGlicmFyeShoZXJlKVxuXG4jIFJ1bnMgY2xlYW5pbmcgc2NyaXB0Llxuc291cmNlKGhlcmUoXCJjbGVhbmluZ19zY3JpcHQvY2xlYW5pbmcuUlwiKSlcblxuIyBSZWFkcyBjbGVhbiBkYXRhIGZyb20gLmNzdiBhbmQgYXNzaWducyB0byBhbiBvYmplY3QgZm9yIGFuYWx5c2lzLlxuY2FuZHlfYW5hbHlzaXMgPC0gcmVhZF9jc3YoaGVyZShcImRhdGEvY2xlYW5fZGF0YS9jYW5keV9jbGVhbi5jc3ZcIikpXG5cbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4jIExvYWRzIGBoZXJlYCBsaWJyYXJ5IHRvIHN1cHBvcnQgZmlsZSBwYXRoL2RpcmVjdG9yeSBtYW5hZ2VtZW50LlxubGlicmFyeShoZXJlKVxuYGBgIn0= -->
 <pre class="r"><code>
 # Loads `here` library to support file path/directory management.
-library(here)
-
-# Runs cleaning script.
-source(here(&quot;cleaning_script/cleaning.R&quot;))
-
-# Reads clean data from .csv and assigns to an object for analysis.
-candy_analysis &lt;- read_csv(here(&quot;data/clean_data/candy_clean.csv&quot;))
-</code></pre>
+library(here)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaGVyZSgpIHN0YXJ0cyBhdCAvVXNlcnMvc3R1YXJ0c3RlbmhvdXNlL0NvZGVjbGFuL2RpcnR5X2RhdGFfY29kZWNsYW5fcHJvamVjdF9zdHVhcnRzdGVuaG91c2UvY2FuZHlcbiJ9 -->
+<pre><code>here() starts at /Users/stuartstenhouse/Codeclan/dirty_data_codeclan_project_stuartstenhouse/candy</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBSdW5zIGNsZWFuaW5nIHNjcmlwdC5cbnNvdXJjZShoZXJlKFwiY2xlYW5pbmdfc2NyaXB0L2NsZWFuaW5nLlJcIikpXG5gYGAifQ== -->
+<pre class="r"><code># Runs cleaning script.
+source(here(&quot;cleaning_script/cleaning.R&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoi4pSA4pSAIEF0dGFjaGluZyBjb3JlIHRpZHl2ZXJzZSBwYWNrYWdlcyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAgdGlkeXZlcnNlIDIuMC4wIOKUgOKUgFxu4pyUIGRwbHlyICAgICAxLjEuMCAgICAg4pyUIHJlYWRyICAgICAyLjEuNFxu4pyUIGZvcmNhdHMgICAxLjAuMCAgICAg4pyUIHN0cmluZ3IgICAxLjUuMFxu4pyUIGdncGxvdDIgICAzLjQuMSAgICAg4pyUIHRpYmJsZSAgICAzLjIuMFxu4pyUIGx1YnJpZGF0ZSAxLjkuMiAgICAg4pyUIHRpZHlyICAgICAxLjMuMFxu4pyUIHB1cnJyICAgICAxLjAuMSAgICAg4pSA4pSAIENvbmZsaWN0cyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAgdGlkeXZlcnNlX2NvbmZsaWN0cygpIOKUgOKUgFxu4pyWIGRwbHlyOjpmaWx0ZXIoKSBtYXNrcyBzdGF0czo6ZmlsdGVyKClcbuKcliBkcGx5cjo6bGFnKCkgICAgbWFza3Mgc3RhdHM6OmxhZygpXG7ihLkgVXNlIHRoZSBcdTAwMWJdODs7aHR0cDovL2NvbmZsaWN0ZWQuci1saWIub3JnL1x1MDAwN2NvbmZsaWN0ZWQgcGFja2FnZVx1MDAxYl04OztcdTAwMDcgdG8gZm9yY2UgYWxsIGNvbmZsaWN0cyB0byBiZWNvbWUgZXJyb3JzXG5BdHRhY2hpbmcgcGFja2FnZTog4oCYamFuaXRvcuKAmVxuXG5UaGUgZm9sbG93aW5nIG9iamVjdHMgYXJlIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6c3RhdHPigJk6XG5cbiAgICBjaGlzcS50ZXN0LCBmaXNoZXIudGVzdFxuXG5cbkF0dGFjaGluZyBwYWNrYWdlOiDigJh0ZXN0dGhhdOKAmVxuXG5UaGUgZm9sbG93aW5nIG9iamVjdCBpcyBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOmRwbHly4oCZOlxuXG4gICAgbWF0Y2hlc1xuXG5UaGUgZm9sbG93aW5nIG9iamVjdCBpcyBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOnB1cnJy4oCZOlxuXG4gICAgaXNfbnVsbFxuXG5UaGUgZm9sbG93aW5nIG9iamVjdHMgYXJlIG1hc2tlZCBmcm9tIOKAmHBhY2thZ2U6cmVhZHLigJk6XG5cbiAgICBlZGl0aW9uX2dldCwgbG9jYWxfZWRpdGlvblxuXG5UaGUgZm9sbG93aW5nIG9iamVjdCBpcyBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOnRpZHly4oCZOlxuXG4gICAgbWF0Y2hlc1xuXG5OZXcgbmFtZXM6XG4ifQ== -->
+<pre><code>── Attaching core tidyverse packages ──────────────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.0     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.4.1     ✔ tibble    3.2.0
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+✔ purrr     1.0.1     ── Conflicts ────────────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors
+Attaching package: ‘janitor’
+
+The following objects are masked from ‘package:stats’:
+
+    chisq.test, fisher.test
+
+
+Attaching package: ‘testthat’
+
+The following object is masked from ‘package:dplyr’:
+
+    matches
+
+The following object is masked from ‘package:purrr’:
+
+    is_null
+
+The following objects are masked from ‘package:readr’:
+
+    edition_get, local_edition
+
+The following object is masked from ‘package:tidyr’:
+
+    matches
+
+New names:</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBSZWFkcyBjbGVhbiBkYXRhIGZyb20gLmNzdiBhbmQgYXNzaWducyB0byBhbiBvYmplY3QgZm9yIGFuYWx5c2lzLlxuY2FuZHlfYW5hbHlzaXMgPC0gcmVhZF9jc3YoaGVyZShcImRhdGEvY2xlYW5fZGF0YS9jYW5keV9jbGVhbi5jc3ZcIikpXG5gYGAifQ== -->
+<pre class="r"><code># Reads clean data from .csv and assigns to an object for analysis.
+candy_analysis &lt;- read_csv(here(&quot;data/clean_data/candy_clean.csv&quot;))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogNjkwNzc5IENvbHVtbnM6IDjilIDilIAgQ29sdW1uIHNwZWNpZmljYXRpb24g4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSAXG5EZWxpbWl0ZXI6IFwiLFwiXG5jaHIgKDQpOiBjb3VudHJ5LCBnZW5kZXIsIGNhbmR5X3R5cGUsIHJlc3BvbnNlXG5kYmwgKDMpOiByZXNwb25zZV9pZCwgYWdlLCB5ZWFyXG5sZ2wgKDEpOiBnb2luZ19vdXRfdHJpY2tfb3JfdHJlYXRpbmdcbuKEuSBVc2UgYHNwZWMoKWAgdG8gcmV0cmlldmUgdGhlIGZ1bGwgY29sdW1uIHNwZWNpZmljYXRpb24gZm9yIHRoaXMgZGF0YS5cbuKEuSBTcGVjaWZ5IHRoZSBjb2x1bW4gdHlwZXMgb3Igc2V0IGBzaG93X2NvbF90eXBlcyA9IEZBTFNFYCB0byBxdWlldCB0aGlzIG1lc3NhZ2UuXG4ifQ== -->
+<pre><code>Rows: 690779 Columns: 8── Column specification ────────────────────────────────────────────────────────────────
+Delimiter: &quot;,&quot;
+chr (4): country, gender, candy_type, response
+dbl (3): response_id, age, year
+lgl (1): going_out_trick_or_treating
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -2074,8 +2124,8 @@ test_that(&quot;Character or Logical input returns an error&quot;, {
   expect_error(most_popular_candy_by_year$input_year(FALSE))
 })</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVGVzdCBwYXNzZWQg8J+YuFxuIn0= -->
-<pre><code>Test passed 😸</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiVGVzdCBwYXNzZWQg8J+lh1xuIn0= -->
+<pre><code>Test passed 🥇</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -2123,8 +2173,8 @@ test_that(&quot;Character or Logical input returns an error&quot;, {
   expect_error(most_popular_candy_by_year_minus_any_full_size$input_year(FALSE))
 })</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVGVzdCBwYXNzZWQg8J+ls1xuIn0= -->
-<pre><code>Test passed 🥳</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiVGVzdCBwYXNzZWQg8J+YgFxuIn0= -->
+<pre><code>Test passed 😀</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
