@@ -57,7 +57,7 @@ candy_2017_clean <- candy_2017 %>%
   rename_with(~str_remove(.x, pattern_to_be_removed_from_2017_data)) %>% 
   rename("going_out_trick_or_treating" = "going_out")
 
-# 3. Add Extra Columns -------------------------------------------------
+# 3. Add Missing Columns -------------------------------------------------
 
 ## 3.1 / 2015 - Add response_id, age, country, gender, year
 
@@ -186,7 +186,7 @@ candy_joined <- candy_joined %>%
 
 # 6. Tidy `age` Data --------------------------------------------------------------
 
-## 6.1 / Set any values that contain non-numeric characters to NA.
+## 6.1 / Set any age values that contain non-numeric characters to NA.
 
 ### Initial number of distinct age values: 274
 
@@ -249,7 +249,7 @@ candy_joined <- candy_joined %>%
 
 ### Number of distinct country values after 7.1, 7.2 and 7.3: 132
 
-## 7.4 / Update USA Based On Exact String Matches
+## 7.4 / Standardise Version of USA Used.
 
 ### When reviewing the country data 42 variations of what it's believed were
 ### intended to mean "United States of America" were found, totaling 3077 
@@ -283,7 +283,7 @@ candy_joined <- candy_joined %>%
 
 ### Number of distinct country values after 7.4: 125
 
-## 7.6 / States In the USA Entered As Country
+## 7.5 / States In the USA Entered As Country
 
 ### When reviewing the country data at this stage I noticed that some states in
 ### the USA looked to have provided as the country. To decide an appropriate
@@ -316,7 +316,7 @@ candy_joined <- candy_joined %>%
 #   distinct(response_id, .keep_all = TRUE) %>% 
 #   filter(country %in% usa_states)
 
-## 7.7 / Update UK Countries
+## 7.6 / Update UK Countries
 
 ### As one of the analysis questions asks about UK values, the decision was made
 ### to group England, Scotland, Wales and Northern Ireland entries under UK.
@@ -337,7 +337,7 @@ candy_joined <- candy_joined %>%
 
 ### Number of distinct country values after 7.7: 122
 
-## 7.8 / Review Country Language Variations
+## 7.7 / Country Language Variations
 
 ### When reviewing the data I noticed that some countries data was not in English
 ### and I intended to match against an English language country list. These were
@@ -362,12 +362,13 @@ candy_joined <- candy_joined %>%
 
 ### Number of distinct country values after 7.8: 123
 
-## 7.10 / Review Prefix Variations
+## 7.8 / Prefix Variations
 
 ## In two cases I encountered problems with the prefix "the" creating seperate
 ## country values for both "the netherlands" and "the united states of america".
 ## Because of problems encountered in later cleaning stages which I believe 
-## these may have been contributing to, these were both recoded.
+## these may have been contributing to, these were both recoded to remove the
+## prefix.
 
 candy_joined <- candy_joined %>%
   mutate(country = recode(country,
@@ -393,9 +394,9 @@ candy_joined <- candy_joined %>%
 ### list was however updated to reflect the preferred formatting of 
 ### "united kingdom" where set earlier in the cleaning process.
 
-## It's recognised that the below section of code does not follow expected style
-## guidelines due to it's length. Unfortunately I encountered some bugs when
-## spreading this over multiple lines and was unable to correct this in time
+## It's acknowledged that the below section of code does not follow expected 
+## style guidelines due to it's length. Unfortunately I encountered some bugs 
+## when spreading this over multiple lines and was unable to correct this in time
 ## prior to submission.
 
 candy_joined <- candy_joined %>%
@@ -406,7 +407,7 @@ candy_joined <- candy_joined %>%
 
 ### Number of distinct country values after match checks: 32
 
-## 7.7 / Set All To Upper case
+## 7.10 / Set All To Upper case
 
 candy_joined <- candy_joined %>%
   mutate(country = str_to_title(country))
@@ -415,8 +416,9 @@ candy_joined <- candy_joined %>%
 
 ### The original data contained 4 gender values 'Male', 'Gender', 'Other',
 ### 'I'd rather not say' and blank values which have been stored as NA.
-### As each of these values represents a unique way of answering, no changes
-### to the gender data have been made.
+### As each of these values represents a unique way of answering (or not
+### answering) and I could not think of any benefits that would result from
+### changes, no changes to the gender data have been made.
 
 # 9. Tidy `going_out_trick_or_treating` Data ----------------------------------
 
@@ -427,15 +429,10 @@ candy_joined <- candy_joined %>%
     TRUE ~ going_out_trick_or_treating),
     going_out_trick_or_treating = as.logical(going_out_trick_or_treating))
 
-# candy_joined <- candy_joined %>% 
-#   mutate(going_out_trick_or_treating = as.logical(going_out_trick_or_treating))
-
-
 ### The original data contained a character string of the values "Yes", "No" or
 ### blank if unanswered which has been stored as NA. As their are only 2 valid 
 ### completed responses ("Yes" and "No") this data has been updated to the 
 ### logical type, with TRUE indicating "Yes" and FALSE indicating "No".
-
 
 # 10. Write To .csv -----------------------------------------------------------
 

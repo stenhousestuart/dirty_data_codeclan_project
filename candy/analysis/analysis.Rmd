@@ -16,6 +16,15 @@ source(here("cleaning_script/cleaning.R"))
 # Reads clean data from .csv and assigns to an object for analysis.
 candy_analysis <- read_csv(here("data/clean_data/candy_clean.csv"))
 
+# Add Score Column
+candy_analysis_with_scoring <- candy_analysis %>%
+  mutate(score = case_when(
+    response == "JOY" ~ 1,
+    response == "MEH" ~ 0,
+    response == "DESPAIR" ~ -1
+  )
+)
+
 ```
 
 ## Analysis
@@ -109,16 +118,6 @@ What was the most popular candy bar by this rating system for each gender
 in the dataset ?
 
 ```{r}
-
-# Add Score Column
-
-candy_analysis_with_scoring <- candy_analysis %>%
-  mutate(score = case_when(
-    response == "JOY" ~ 1,
-    response == "MEH" ~ 0,
-    response == "DESPAIR" ~ -1
-  )
-)
 
 # Calculate for Males
 
