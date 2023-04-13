@@ -44,7 +44,6 @@ candy_analysis %>%
 
 ```
 
-
 ### Q3.
 What was the average age of people who are not going trick or treating?
 
@@ -88,7 +87,6 @@ candy_analysis %>%
 
 ```
 
-
 ### Q5.
 How many people rated Starburst as despair?
 
@@ -131,7 +129,6 @@ candy_analysis_with_scoring %>%
   arrange(desc(total_score)) %>% 
   head(1)
 
-
 ```
 
 ```{r}
@@ -140,6 +137,44 @@ candy_analysis_with_scoring %>%
 
 candy_analysis_with_scoring %>% 
   filter(gender == "Female") %>% 
+  group_by(candy_type) %>% 
+  summarise(total_score = sum(score, na.rm = TRUE)) %>% 
+  arrange(desc(total_score)) %>% 
+  head(1)
+
+```
+
+```{r}
+
+# Calculate for Other
+
+candy_analysis_with_scoring %>% 
+  filter(gender == "Other") %>% 
+  group_by(candy_type) %>% 
+  summarise(total_score = sum(score, na.rm = TRUE)) %>% 
+  arrange(desc(total_score)) %>% 
+  head(1)
+
+```
+```{r}
+
+# Calculate for I'd rather not say
+
+candy_analysis_with_scoring %>% 
+  filter(gender == "I'd rather not say") %>% 
+  group_by(candy_type) %>% 
+  summarise(total_score = sum(score, na.rm = TRUE)) %>% 
+  arrange(desc(total_score)) %>% 
+  head(1)
+
+```
+
+```{r}
+
+# Calculate for NA
+
+candy_analysis_with_scoring %>% 
+  filter(is.na(gender)) %>% 
   group_by(candy_type) %>% 
   summarise(total_score = sum(score, na.rm = TRUE)) %>% 
   arrange(desc(total_score)) %>% 
