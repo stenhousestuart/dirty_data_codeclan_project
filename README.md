@@ -4,9 +4,9 @@
 
 ## Introduction
 
-Initially completed in April 2023, the `dirty_data_codeclan_project` repository contains two tasks titled `candy` and `cake` which are tasks completed as part of the CodeClan Professional Data Analysis Course. Together the tasks form the first project completed on the course, titled the `Dirty Data Project`.
+Initially completed in April 2023, as part of the CodeClan Professional Data Analysis Course, the `dirty_data_codeclan_project` repository contains two tasks titled `candy` and `cake`. Together the tasks form the first project completed on the course, the `Dirty Data Project`.
 
-The `candy` data forms the bulk of work in this project, with the data provided requiring significantly more wrangling and cleaning prior to analysis in comparison to the `cake` data. 
+The `candy` data forms the majority of work in this project, with the data provided requiring significantly more wrangling and cleaning before analysis than the `cake` data.
 
 A short description of each task is included below; however, for more detailed information please see the individual `README.md` files. 
 
@@ -40,21 +40,6 @@ Both projects comprise of the same folder/file structure.
 
 *NB: The raw data files from both projects have not been uploaded.*
 
-### `cake`
-
-| **Folder**                                                       | **File Name**              |
-|-------------------------------------------------|-----------------------|
-| dirty_data_codeclan_project_stuartstenhouse                      | README.md                  |
-| dirty_data_codeclan_project_stuartstenhouse                      | .gitignore                 |
-| dirty_data_codeclan_project_stuartstenhouse/cake                 | cake.Rproj                 |
-| dirty_data_codeclan_project_stuartstenhouse/cake                 | README.md                  |
-| dirty_data_codeclan_project_stuartstenhouse/cake/analysis        | analysis.Rmd               |
-| dirty_data_codeclan_project_stuartstenhouse/cake/analysis        | analysis.nb.html           |
-| dirty_data_codeclan_project_stuartstenhouse/cake/data/raw_data   | cake-ingredients-1961.csv  |
-| dirty_data_codeclan_project_stuartstenhouse/cake/data/raw_data   | cake_ingredient_code.csv   |
-| dirty_data_codeclan_project_stuartstenhouse/cake/data/clean_data | cake_ingredients_clean.csv |
-| dirty_data_codeclan_project_stuartstenhouse/cake/cleaning_script | cleaning.R                 |
-
 ### `candy`
 
 | **Folder**                                                        | **File Name**               |
@@ -70,5 +55,20 @@ Both projects comprise of the same folder/file structure.
 | dirty_data_codeclan_project_stuartstenhouse/candy/data/raw_data   | boing-boing-candy-2017.xlsx |
 | dirty_data_codeclan_project_stuartstenhouse/candy/data/clean_data | candy_clean.csv             |
 | dirty_data_codeclan_project_stuartstenhouse/candy/cleaning_script | cleaning.R                  |
+
+### `cake`
+
+| **Folder**                                                       | **File Name**              |
+|-------------------------------------------------|-----------------------|
+| dirty_data_codeclan_project_stuartstenhouse                      | README.md                  |
+| dirty_data_codeclan_project_stuartstenhouse                      | .gitignore                 |
+| dirty_data_codeclan_project_stuartstenhouse/cake                 | cake.Rproj                 |
+| dirty_data_codeclan_project_stuartstenhouse/cake                 | README.md                  |
+| dirty_data_codeclan_project_stuartstenhouse/cake/analysis        | analysis.Rmd               |
+| dirty_data_codeclan_project_stuartstenhouse/cake/analysis        | analysis.nb.html           |
+| dirty_data_codeclan_project_stuartstenhouse/cake/data/raw_data   | cake-ingredients-1961.csv  |
+| dirty_data_codeclan_project_stuartstenhouse/cake/data/raw_data   | cake_ingredient_code.csv   |
+| dirty_data_codeclan_project_stuartstenhouse/cake/data/clean_data | cake_ingredients_clean.csv |
+| dirty_data_codeclan_project_stuartstenhouse/cake/cleaning_script | cleaning.R                 |
 
 ------------------------------------------------------------------------

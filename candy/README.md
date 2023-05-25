@@ -4,9 +4,7 @@
 
 ## Introduction
 
-The `Candy Analysis` is a task completed as part of the CodeClan Professional Data Analysis Course and as part the `Dirty Data Project`. The task is part of the `dirty_data_codeclan_project` repository which also contains the `Cake Analysis` task.
-
-The data used is published by "The Science Creative Quarterly" and contains the results of a questionnaire where people were asked to indicate their feelings relating to various types of candy. The questionnaire also contained questions not relating to candy, however these are excluded during data cleaning. Data was collected over three years - 2015, 2016 and 2017.
+This project involved the wrangling, cleaning and analysis of data relating to individual candy preferences. Data was provided in 3x .xlsx files, one for each year (2015, 2016, 2017) and was initially published by "The Science Creative Quarterly".
 
 ------------------------------------------------------------------------
 
@@ -60,13 +58,13 @@ the cleaning step. Where this was the case, these observations were filtered fro
     This process also flagged to country values which contained 2 country names "not the usa or canada" and "i pretend to be from canada but i am really from the united states". Because of problems encountered in later cleaning stages which I believe these may have been contributing to and because these were only associated to 1 response each, I decided to update these to blank to be updated to NA when not matched on the country list.
 
 -   **7.5 / States In the USA Entered As Country:**\
-    When reviewing the `country` data at this stage I noticed that some states in the USA looked to have provided as the country. To decide an appropriate approach to these, I looked at how many times this had occurred. I found that 5 US states had been entered as the `country` ('alaska', 'new jersey', 'new york', 'north carolina' and 'california') and that each had been used only once. With this in mind, I decided that due to only being related to 5 responses, leaving these to update to NA when they failed to match against the country list would not adversely impact the analysis. The code used for checking for US State data has been left for reference in the cleaning script, but has been commented out as it is not required for cleaning.
+    When reviewing the `country` data at this stage I noticed that some states in the USA looked to have provided as the country. To decide an appropriate approach to these, I looked at how many times this had occurred. I found that 5 US states had been entered as the `country` ('alaska', 'new jersey', 'new york', 'north carolina' and 'california') and that each had been used only once. With this in mind, I decided that due to only being related to 5 responses, leaving these to update to NA when they failed to match against the country list would not adversely impact the analysis.
 
 -   **7.6 / Update UK Countries:**\
     As one of the analysis questions asks about UK values, the decision was made to group England, Scotland, Wales and Northern Ireland entries under UK. A number of respondents had also entered a version of the UK for their `country` and this also informed my decision. When reviewing the data, excluding those already specified as "United Kingdom", 4 entries that would fall in the category of the United Kingdom were identified ("united kindom", "scotland", "endland", "england" and "uk") which were linked to 1, 5, 1, 5 and 30 responses in turn. I therefor decided to recode values used 5 or more times, which would result in only 2 responses having their `country` value updated to NA when they failed to match the country list.
 
 -   **7.7 / Country Language Variations:**\
-    When reviewing the data I noticed that some `country` names was not in English and I intended to match against an English language country list. These were "españa" and "brasil". Both were linked to only one response and in-line with other steps when cleaning the country data, I decided that leaving this to update to NA when they did not match to the country list would not adversely impact the analysis. However, to demonstrate how these could be recoded, the code for this has been included in the cleaning script and commented out. The code used for checking the usages of each variation has also been included but commented out as it is not required for cleaning.
+    When reviewing the data I noticed that some `country` names was not in English and I intended to match against an English language country list. These were "españa" and "brasil". Both were linked to only one response and in-line with other steps when cleaning the country data, I decided that leaving this to update to NA when they did not match to the country list would not adversely impact the analysis.
 
 -   **7.8 / Prefix Variations:**\
     In two cases I encountered problems with the prefix "the" creating separate `country` values for both "the netherlands" and "the united states of america". Because of problems encountered in later cleaning stages which I believe these may have been contributing to, these were both recoded to remove the prefix.

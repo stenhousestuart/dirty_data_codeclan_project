@@ -4,11 +4,7 @@
 
 ## Introduction
 
-The `Cake Analysis` is a piece of work being completed as part of the
-CodeClan Professional Data Analysis Course and as part the `Dirty Data Project`. The project is part of the
-`dirty_data_codeclan_project` repository which also contains the `Candy Analysis` project.
-
-The data itself describes the ingredients used in the making of a variety of cakes, the necessary quantity of each ingredient and the measure used for the ingredient.
+The data used describes the ingredients used in the making of a variety of cakes, the necessary quantity of each ingredient and the measure used for the ingredient.
 
 ------------------------------------------------------------------------
 

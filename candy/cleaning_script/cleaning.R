@@ -17,28 +17,19 @@ candy_2017 <- read_excel(here("data/raw_data/boing-boing-candy-2017.xlsx"))
 
 # 2. Select Data ------------------------------------
 
-## Various steps are completed at this stage for each data set. For clarity,
-## in-line comments have been added below.
-
 candy_2015_clean <- candy_2015 %>%
-  # Select columns 1:3 and those beginning with `[`
   select(2:3 | starts_with("[")) %>% 
-  # Clean variable names.
   clean_names() %>% 
-  # Drops any fully empty rows, none dropped.
+  # Check for and drop any empty rows, none dropped.
   remove_empty("rows") %>% 
-  # Rename columns where required.
   rename("age" = "how_old_are_you",
          "going_out_trick_or_treating" = "are_you_going_actually_going_trick_or_treating_yourself")
 
 candy_2016_clean <- candy_2016 %>%
-  # Select Columns 1:6 and those beginning with `[`
   select(2:5 | starts_with("[")) %>% 
-  # Clean variable names.
   clean_names() %>% 
-  # Drops any fully empty rows, none dropped.
+  # Check for and drop any empty rows, none dropped.
   remove_empty("rows") %>% 
-  # Rename columns where required.
   rename("age" = "how_old_are_you",
          "country" = "which_country_do_you_live_in",
          "going_out_trick_or_treating" = "are_you_going_actually_going_trick_or_treating_yourself",
@@ -47,13 +38,11 @@ candy_2016_clean <- candy_2016 %>%
 pattern_to_be_removed_from_2017_data <- "^[q]+[0-9]+[_]+"
 
 candy_2017_clean <- candy_2017 %>%
-  # Select Columns 1:6 and those beginning with `Q6`
   select(2:5 | starts_with("Q6")) %>% 
-  # Clean variable names.
   clean_names() %>%
-  # Drops any fully empty rows, 21.
+  # Check for and drop any empty rows, 21 rows dropped.
   remove_empty("rows") %>% 
-  # Remove `q.1_` or `q.10_` from start of variable name.
+  # Remove `q.1_` & `q.10_` from start of variable names.
   rename_with(~str_remove(.x, pattern_to_be_removed_from_2017_data)) %>% 
   rename("going_out_trick_or_treating" = "going_out")
 
@@ -86,21 +75,21 @@ candy_2017_clean <- candy_2017_clean %>%
 
 # 4. Pivot Data To Long Format & Join --------------------------------------------------------------
 
-## 4.1 / Pivot Long 2015: No. Observations after pivot should be 534850.
+## 4.1 / Pivot 2015 Data
 
 candy_2015_long <- candy_2015_clean %>%
   pivot_longer(cols = 6:100, 
                names_to = "candy_type", 
                values_to = "response") 
 
-## 4.2 / Pivot Long 2016: No. Observations after pivot should be 127159
+## 4.2 / Pivot 2016 Data
 
 candy_2016_long <- candy_2016_clean %>%
   pivot_longer(cols = 6:106, 
                names_to = "candy_type", 
                values_to = "response") 
 
-## 4.3 / Pivot Long 2017: No. Observations after pivot should be 251217.
+## 4.3 / Pivot 2017 Data
 
 candy_2017_long <- candy_2017_clean %>%
   pivot_longer(cols = 6:108, 
@@ -109,24 +98,20 @@ candy_2017_long <- candy_2017_clean %>%
 
 ## 4.4 / Join 2015, 2016 & 2017 Data
 
-## No. Observations after bind should be 913226, no observations lost.
-
 candy_joined <- bind_rows(candy_2015_long, candy_2016_long, 
                           candy_2017_long)
   
 # 5. Clean `candy_type` Data --------------------------------------------------
+
+### Details:
+### During the cleaning of the `candy_type` data some assumptions and judgements were made.
+### Please see the associated README.md for details.
 
 ## 5.1 / Replace all `_` with ` `.
 candy_joined <- candy_joined %>%
   mutate(candy_type = str_replace_all(candy_type, "_", " "))
 
 ## 5.2 / Standardise Candy Names
-
-### Initial number of distinct candy_type values: 126
-
-### Details:
-### Please see the associated README.md for details of assumptions and judgements
-### made at this stage.
 
 candy_joined <- candy_joined %>%
   mutate(candy_type = str_replace_all(candy_type, "a friend to diabetes", ""),
@@ -137,13 +122,7 @@ candy_joined <- candy_joined %>%
     str_detect(candy_type, "anonymous brown globs") ~ "mary janes",
     TRUE ~ candy_type ))
 
-### Number of distinct candy_type values after standardising spelling: 123
-
 ## 5.3 / Remove Non-Candy Items
-
-### Details:
-### Please see the associated README.md for details of assumptions and judgements
-### made at this stage.
 
 not_candy <- c("vials of pure high fructose corn syrup for main lining into your vein", 
                "cash or other forms of legal tender", "dental paraphenalia",
@@ -164,19 +143,13 @@ not_candy <- c("vials of pure high fructose corn syrup for main lining into your
 candy_joined <- candy_joined %>%
   filter(!candy_type %in% not_candy)
 
-### Number of distinct candy_type values after dropping non-candy: 89
-
-### No. Observations after tidying candy_type data: 690779 (-222447).
-
 # 6. Clean `age` Data --------------------------------------------------------------
 
-## 6.1 / Set any age values that contain characters that aren't 0-9 or . to NA
-
-### Number of responses with age value: 9032
-
 ### Details:
-### Please see the associated README.md for details of assumptions and judgements
-### made at this stage.
+### During the cleaning of the `age` data some assumptions and judgements were made.
+### Please see the associated README.md for details.
+
+## 6.1 / Set any age values that contain characters that aren't 0-9 or . to NA
 
 candy_joined <- candy_joined %>%
   mutate(age = str_trim(age))
@@ -185,8 +158,6 @@ non_digit_pattern <- "[^0-9 .]"
 
 candy_joined <- candy_joined %>%
   mutate(age = str_replace_all(age, non_digit_pattern, NA_character_))
-
-### Number of responses with age value after update: 8888
 
 ## 6.2 / Set class to numeric
 
@@ -199,26 +170,16 @@ candy_joined <- candy_joined %>%
   mutate(age = if_else(age %in% c(0.62, 18.17, 18.75, 23.2, 39.4, 44.4444, 
                                   70.5), NA, age))
 
-### Number of responses with age value after update: 8880
-
-## 6.4 / Set any value greater than 116 to NA.
-
-### Details:
-### 116 has been selected as according to online research this is the current 
-### age of the oldest known living human.
+## 6.4 / Set any value greater than 116 (age of oldest known living human) to NA.
 
 candy_joined <- candy_joined %>%
   mutate(age = if_else(age > 116, NA, age))
 
-### Number of responses with age value after update: 8867
-
 # 7. Clean `country` Data ----------------------------------------------------------
 
-### Initial number of distinct country values: 169
-
 ### Details:
-### Please see the associated README.md for details of assumptions and judgements
-### made at this stage.
+### During the cleaning of the `country` data some assumptions and judgements were made.
+### Please see the associated README.md for details.
 
 ## 7.1 / Remove Non-Alpha-Numeric Values
 
@@ -237,13 +198,7 @@ candy_joined <- candy_joined %>%
 candy_joined <- candy_joined %>%
   mutate(country = str_trim(country))
 
-### Number of distinct country values after 7.1, 7.2 and 7.3: 132
-
 ## 7.4 / Standardise Version of USA Used.
-
-### Details:
-### Please see the associated README.md for details of assumptions and judgements
-### made at this stage.
 
 candy_joined <- candy_joined %>%
   mutate(country = recode(country,
@@ -259,38 +214,7 @@ candy_joined <- candy_joined %>%
                           "not the usa or canada" = "",
                           "i pretend to be from canada  but i am really from the united states" = ""))
 
-### Number of distinct country values after 7.4: 125
-
-## 7.5 / States In the USA Entered As Country
-
-### Details:
-### This code has been intentionally commented out. Please see the associated 
-### made at this stage. README.md for details.
-
-### List of US States
-
-# usa_states <- c("alaska", "alabama", "arkansas", "american samoa", "arizona",
-#                 "california", "colorado", "connecticut", "district of columbia",
-#                 "delaware", "florida", "georgia", "guam", "hawaii", "iowa",
-#                 "idaho", "illinois", "indiana", "kansas", "kentucky",
-#                 "louisiana", "massachusetts", "maryland", "maine", "michigan",
-#                 "minnesota", "missouri", "mississippi", "montana", "north carolina",
-#                 "north dakota", "nebraska", "new hampshire", "new jersey",
-#                 "new mexico", "nevada", "new york", "ohio", "oklahoma", "oregon",
-#                 "pennsylvania", "puerto rico", "rhode island", "south carolina",
-#                 "south dakota", "tennessee", "texas", "utah", "virginia",
-#                 "virgin islands", "vermont", "washington", "wisconsin",
-#                 "west virginia", "wyoming")
-
-### Check if any US states provided as country
-# usa_state_check <- candy_joined %>%
-#   distinct(response_id, .keep_all = TRUE) %>% 
-#   filter(country %in% usa_states)
-
-## 7.6 / Update UK Countries
-
-### Please see the associated README.md for details of assumptions and judgements
-### made at this stage.
+## 7.5 / Update UK Countries
 
 candy_joined <- candy_joined %>%
   mutate(country = recode(country,
@@ -298,50 +222,14 @@ candy_joined <- candy_joined %>%
                           "scotland" = "united kingdom",
                           "uk" = "united kingdom"))
 
-### Number of distinct country values after 7.7: 122
-
-## 7.7 / Country Language Variations
-
-### Details:
-### This code has been intentionally commented out. Please see the associated 
-### made at this stage. README.md for details.
-
-# language_country_check <- candy_joined %>%
-#   distinct(response_id, .keep_all = TRUE) %>% 
-#   filter(country %in% c("españa", "spain", "brasil")) %>%
-#   group_by(country) %>% 
-#   summarise(total_usages_by_name = n())
-# 
-# candy_joined <- candy_joined %>%
-#   mutate(country = recode(country,
-#                          "españa" = "spain",
-#                          "brasil" = "brazil"))
-
-### Number of distinct country values after 7.8: 123
-
-## 7.8 / Prefix Variations
-
-### Details:
-### Please see the associated README.md for details of assumptions and judgements
-### made at this stage.
+## 7.6 / Clean Prefix Variations
 
 candy_joined <- candy_joined %>%
   mutate(country = recode(country,
                           "the netherlands" = "netherlands",
                           "the united states of america" = "united states of america"))
 
-### Number of distinct country values after 7.9: 120
-
-## 7.9 / Remove Non Country Values
-
-### Details:
-### Please see the associated README.md for details of assumptions and judgements
-### made at this stage.
-
-### It's acknowledged that the below section of code does not follow expected 
-### style guidelines due to it's length. Unfortunately I encountered some bugs 
-### when spreading this over multiple lines and was unable to correct this in time
-### prior to submission.
+## 7.7 / Remove Non Country Values
 
 candy_joined <- candy_joined %>%
   mutate(country = case_when(
@@ -349,9 +237,7 @@ candy_joined <- candy_joined %>%
                negate = TRUE) ~ NA,
     TRUE ~ country))
 
-### Number of distinct country values after match checks: 32
-
-## 7.10 / Set All To Upper case
+## 7.8 / Set All To Upper case
 
 candy_joined <- candy_joined %>%
   mutate(country = str_to_title(country))
