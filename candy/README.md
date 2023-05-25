@@ -10,7 +10,7 @@ This project involved the wrangling, cleaning and analysis of data relating to i
 
 ## Aim
 
-The aim of this project is to clean and answer set questions about the data.
+The aim of this project is to wrangle and clean the data to enable analysis to answer set questions.
 
 ------------------------------------------------------------------------
 

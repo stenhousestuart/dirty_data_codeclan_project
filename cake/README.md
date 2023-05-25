@@ -10,7 +10,7 @@ The data used describes the ingredients used in the making of a variety of cakes
 
 ## Aim
 
-The aim of this project is to clean the data and answer the questions posed about the data.
+The aim of this project is to wrangle and clean the data to enable analysis to answer set questions.
 
 ------------------------------------------------------------------------
 
