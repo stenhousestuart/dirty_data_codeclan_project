@@ -1,27 +1,20 @@
 # Cake Analysis
 
-## April 2023
-
 ------------------------------------------------------------------------
 
 ## Introduction
 
 The `Cake Analysis` is a piece of work being completed as part of the
-CodeClan Professional Data Analysis Course and as part the
-`Dirty Data Project`. The project is part of the
-`dirty_data_codeclan_project_stuartstenhouse` repository which also
-contains the `Candy Analysis` project.
+CodeClan Professional Data Analysis Course and as part the `Dirty Data Project`. The project is part of the
+`dirty_data_codeclan_project` repository which also contains the `Candy Analysis` project.
 
-The data itself describes the ingredients used in the making of a
-variety of cakes, the necessary quantity of each ingredient and the
-measure used for the ingredient.
+The data itself describes the ingredients used in the making of a variety of cakes, the necessary quantity of each ingredient and the measure used for the ingredient.
 
 ------------------------------------------------------------------------
 
 ## Aim
 
-The aim of this project is to clean the data and answer the questions
-posed about the data.
+The aim of this project is to clean the data and answer the questions posed about the data.
 
 ------------------------------------------------------------------------
 
@@ -32,15 +25,15 @@ posed about the data.
 The cleaning script is launched from the analysis notebook and performs
 a range of functions, including:
 
--   Loading the necessary R packages.
--   Reading in, selecting and pivoting the required data to long format.
--   Joining the datasets based on `ingredient_code` and `code` in order
+-   Loads required R packages and reads in the raw data.
+-   Pivot data to long format.
+-   Joins the datasets based on `ingredient_code` and `code` in order
     to be able to use the full ingredient names as opposed to the
     abbreviations.
 -   Cleaning the data contained within each variable - `cake`,
     `ingredient`, `measure` and `quantity`. This required a range of
     processes including, but not limited to, cleaning variable names,
-    replacing NA `measurement` values and seperating `ingredient` and
+    managing NA values and separating `ingredient` and
     `measurement` data that had been combined into one column.
 -   Finally, writing the cleaned data to a .csv titled
     `cake_ingredients_clean.csv`.
@@ -55,7 +48,7 @@ including, but not limited to, `filter`, `group_by`, `summarise` and
 
 ------------------------------------------------------------------------
 
-### Assumptions / Personal Judgements:
+### Assumptions / Judgements:
 
 Throughout the cleaning process a range of assumptions and personal
 judgements were made. These were made within the context of my own

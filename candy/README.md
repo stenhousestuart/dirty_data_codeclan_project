@@ -1,12 +1,10 @@
 # Candy Analysis
 
-## April 2023
-
 ------------------------------------------------------------------------
 
 ## Introduction
 
-The `Candy Analysis` is a task completed as part of the CodeClan Professional Data Analysis Course and as part the `Dirty Data Project`. The task is part of the `dirty_data_codeclan_project_stuartstenhouse` repository which also contains the `Cake Analysis` task.
+The `Candy Analysis` is a task completed as part of the CodeClan Professional Data Analysis Course and as part the `Dirty Data Project`. The task is part of the `dirty_data_codeclan_project` repository which also contains the `Cake Analysis` task.
 
 The data used is published by "The Science Creative Quarterly" and contains the results of a questionnaire where people were asked to indicate their feelings relating to various types of candy. The questionnaire also contained questions not relating to candy, however these are excluded during data cleaning. Data was collected over three years - 2015, 2016 and 2017.
 
@@ -24,12 +22,11 @@ The aim of this project is to clean and answer set questions about the data.
 
 The cleaning script is launched from the analysis notebook and performs a range of functions, including:
 
--   Loading the necessary R packages.
--   Reading in and selecting the required data.
--   Adding additional columns where needed - for example, the 2015 questionnaire 
+-   Loads required R packages and reads in the raw data.
+-   Adds additional columns where needed - for example, the 2015 questionnaire 
 had not collected `age` data. A `response_id` was also added to each response, 
 made up of the year and row number, to act as a unique identifier.
--   Pivoting the data to long format before binding the rows.
+-   Pivots the data to long format before binding the rows.
 -   Cleaning the data contained within each variable (incl. `country`, `age`, `candy_type`) through a range of processes including, but not limited to, filtering non-candy `candy_type` values, allowing only numeric `age` values up-to a maximum age and wrangling the `country` data to retain as much valid `country` data as possible.
 -   Finally, writing the cleaned data to a .csv titled `candy_clean.csv`.
 

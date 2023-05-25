@@ -1,17 +1,36 @@
 # Dirty Data Project
 
-## April 2023
-
 ------------------------------------------------------------------------
 
 ## Introduction
 
-The `dirty_data_codeclan_project_stuartstenhouse` repository contains two tasks titled `cake` and `candy` which are tasks completed as part of the CodeClan Professional Data Analysis Course. Together the tasks form the first project completed on the course, titled the `Dirty Data Project`.
+Initially completed in April 2023, the `dirty_data_codeclan_project` repository contains two tasks titled `candy` and `cake` which are tasks completed as part of the CodeClan Professional Data Analysis Course. Together the tasks form the first project completed on the course, titled the `Dirty Data Project`.
 
-A short description of each task is included below; however, for more detailed information please see the individual `README.md` files.
+The `candy` data forms the bulk of work in this project, with the data provided requiring significantly more wrangling and cleaning prior to analysis in comparison to the `cake` data. 
 
--   `cake`: Cleaning and analysis of data relating to different cake ingredients.
--   `candy`: Cleaning and analysis of data relating to individual candy preferences.
+A short description of each task is included below; however, for more detailed information please see the individual `README.md` files. 
+
+- `candy`: Wrangling, Cleaning and basic analysis of data relating to individual candy preferences.
+- `cake`: Wrangling, Cleaning and basic analysis of data relating to cake ingredients.
+
+------------------------------------------------------------------------
+
+## Key Skills / Technologies Used
+
+**Skills**
+- Data Wrangling
+- Data Cleaning
+- Exploratory Data Analysis.
+
+**Technologies**
+- R
+- RMarkdown
+- Git
+- GitHub
+- Tidyverse
+- Janitor
+- testthat
+- here
 
 ------------------------------------------------------------------------
 
@@ -19,7 +38,7 @@ A short description of each task is included below; however, for more detailed i
 
 Both projects comprise of the same folder/file structure.
 
-*NB: The data files from both projects have not been uploaded.*
+*NB: The raw data files from both projects have not been uploaded.*
 
 ### `cake`
 

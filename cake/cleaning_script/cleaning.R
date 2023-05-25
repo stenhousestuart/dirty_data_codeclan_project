@@ -42,7 +42,7 @@ cake_ingredients_clean <- cake_ingredients_clean %>%
 ### 2.2 Update NA `measure values` to `cup` where the ingredient is `Sour Cream`
 
 ### Only `Sour Cream` had a measure of NA, so the below was sufficient - however,
-### improvements would be requied to manage additional data sets accurately.
+### improvements would be required to manage additional data sets accurately.
 
 cake_ingredients_clean <- cake_ingredients_clean %>%
   mutate(measure = coalesce(measure, "Cup"))
